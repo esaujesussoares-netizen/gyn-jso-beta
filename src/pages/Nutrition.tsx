@@ -79,7 +79,7 @@ const Nutrition = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('meals')
         .select('*')
         .eq('user_id', session.session.user.id)
@@ -256,7 +256,7 @@ const Nutrition = () => {
       const { data: session } = await supabase.auth.getSession();
       
       if (session?.session?.user) {
-        const { error: saveError } = await supabase
+        const { error: saveError } = await (supabase as any)
           .from('meals')
           .insert({
             user_id: session.session.user.id,
