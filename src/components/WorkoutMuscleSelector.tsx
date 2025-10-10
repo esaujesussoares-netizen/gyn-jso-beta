@@ -37,25 +37,25 @@ interface MuscleLabel {
 }
 
 const frontLabels: MuscleLabel[] = [
-  { name: "Ombros", muscle: "ombros", side: "left", left: "0.7%", top: "29.2%" },
-  { name: "Bíceps", muscle: "biceps", side: "left", left: "0.0%", top: "39.0%" },
+  { name: "Ombros", muscle: "ombros", side: "left", left: "1.4%", top: "30.6%" },
+  { name: "Bíceps", muscle: "biceps", side: "left", left: "0.0%", top: "39.2%" },
   { name: "Oblíquos", muscle: "obliquos", side: "left", left: "0.0%", top: "47.1%" },
   { name: "Abdutores", muscle: "abdutores", side: "left", left: "0.0%", top: "57.3%" },
-  { name: "Quadríceps", muscle: "quadriceps", side: "left", left: "0.0%", top: "70.5%" },
+  { name: "Quadríceps", muscle: "quadriceps", side: "left", left: "1.4%", top: "68.4%" },
   { name: "Peitoral", muscle: "peitoral", side: "right", right: "0.0%", top: "33.4%" },
   { name: "Abdômen", muscle: "abdomen", side: "right", right: "6.8%", top: "42.5%" },
   { name: "Antebraços", muscle: "antebracos", side: "right", right: "1.1%", top: "51.6%" },
-  { name: "Adutores", muscle: "adutores", side: "right", right: "1.1%", top: "61.2%" },
-  { name: "Cardio", muscle: "cardio", side: "right", right: "0.0%", top: "81.2%" }
+  { name: "Adutores", muscle: "adutores", side: "right", right: "5.4%", top: "61.8%" },
+  { name: "Cardio", muscle: "cardio", side: "right", right: "0.0%", top: "81.8%" }
 ];
 
 const backLabels: MuscleLabel[] = [
   { name: "Trapézio", muscle: "trapezio", side: "right", right: "0.0%", top: "26.8%" },
-  { name: "Tríceps", muscle: "triceps", side: "left", left: "0.0%", top: "39.3%" },
+  { name: "Tríceps", muscle: "triceps", side: "left", left: "0.0%", top: "38.7%" },
   { name: "Dorsais", muscle: "dorsais", side: "right", right: "0.0%", top: "39.8%" },
-  { name: "Lombares", muscle: "lombares", side: "left", left: "3.2%", top: "47.4%" },
+  { name: "Lombares", muscle: "lombares", side: "left", left: "6.4%", top: "48.9%" },
   { name: "Glúteos", muscle: "gluteos", side: "right", right: "1.8%", top: "54.9%" },
-  { name: "Isquiotibiais", muscle: "isquiotibiais", side: "left", left: "7.9%", top: "65.2%" },
+  { name: "Isquiotibiais", muscle: "isquiotibiais", side: "left", left: "1.4%", top: "67.5%" },
   { name: "Panturrilhas", muscle: "panturrilhas", side: "left", left: "1.4%", top: "87.7%" },
   { name: "Cardio", muscle: "cardio", side: "right", right: "0.0%", top: "81.1%" }
 ];
