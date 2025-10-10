@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ExerciseList } from "@/components/ExerciseList";
-import { RefreshCw, X, Edit, Copy, RotateCcw, Move, Plus, Minus, ArrowLeftRight, ArrowUpDown, ChevronDown } from "lucide-react";
+import { RefreshCw, X, Edit, Copy, RotateCcw, Move, Plus, Minus, ArrowLeftRight, ArrowUpDown, ChevronDown, ArrowLeftRight as FlipHorizontal } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import bodyFront from "@/assets/body-front-workout.png";
 import bodyBack from "@/assets/body-back-workout.png";
@@ -74,6 +74,7 @@ interface LabelSize {
 interface ConnectorStyle {
   lineWidth: number; // pixels
   dotSize: number; // pixels
+  flipped: boolean; // se o conector está invertido
 }
 
 type CustomPositions = {
@@ -275,7 +276,7 @@ export function WorkoutMuscleSelector() {
 
   const adjustConnectorStyle = (muscle: MuscleGroup, property: 'lineWidth' | 'dotSize', delta: number) => {
     setConnectorStyles(prev => {
-      const currentStyle = prev[view][muscle] || { lineWidth: 24, dotSize: 6 };
+      const currentStyle = prev[view][muscle] || { lineWidth: 24, dotSize: 6, flipped: false };
       const newStyle = {
         ...currentStyle,
         [property]: Math.max(property === 'lineWidth' ? 12 : 3, Math.min(property === 'lineWidth' ? 48 : 12, currentStyle[property] + delta))
@@ -291,8 +292,26 @@ export function WorkoutMuscleSelector() {
     });
   };
 
+  const toggleConnectorFlip = (muscle: MuscleGroup) => {
+    setConnectorStyles(prev => {
+      const currentStyle = prev[view][muscle] || { lineWidth: 24, dotSize: 6, flipped: false };
+      const newStyle = {
+        ...currentStyle,
+        flipped: !currentStyle.flipped
+      };
+      
+      return {
+        ...prev,
+        [view]: {
+          ...prev[view],
+          [muscle]: newStyle
+        }
+      };
+    });
+  };
+
   const getConnectorStyle = (muscle: MuscleGroup): ConnectorStyle => {
-    return connectorStyles[view][muscle] || { lineWidth: 24, dotSize: 6 };
+    return connectorStyles[view][muscle] || { lineWidth: 24, dotSize: 6, flipped: false };
   };
 
   const editedCount = Object.keys(customPositions.front).length + Object.keys(customPositions.back).length;
@@ -540,6 +559,19 @@ export function WorkoutMuscleSelector() {
                     </div>
                   </div>
                 </div>
+
+                {/* Flip Connector Button */}
+                <div className="pt-2">
+                  <Button
+                    size="sm"
+                    variant={getConnectorStyle(selectedLabelForResize).flipped ? "default" : "outline"}
+                    onClick={() => toggleConnectorFlip(selectedLabelForResize)}
+                    className="w-full"
+                  >
+                    <FlipHorizontal className="w-4 h-4 mr-2" />
+                    {getConnectorStyle(selectedLabelForResize).flipped ? "Conector Invertido" : "Inverter Conector"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -586,7 +618,11 @@ export function WorkoutMuscleSelector() {
                   onClick={() => handleMuscleSelect(label.muscle)}
                   onMouseDown={(e) => handleMouseDown(e, label)}
                 >
-                  <div className={`flex items-center ${label.side === "left" ? "flex-row" : "flex-row-reverse"} gap-1 ${
+                  <div className={`flex items-center ${
+                    connectorStyle.flipped 
+                      ? (label.side === "left" ? "flex-row-reverse" : "flex-row")
+                      : (label.side === "left" ? "flex-row" : "flex-row-reverse")
+                  } gap-1 ${
                     isEditMode ? 'border-2 border-dashed border-blue-400 rounded px-1' : ''
                   } ${isSelected ? 'bg-blue-100' : ''}`}>
                     {isEditMode && (
