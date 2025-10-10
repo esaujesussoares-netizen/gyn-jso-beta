@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ExerciseList } from "@/components/ExerciseList";
-import { RefreshCw, X, Edit, Copy, RotateCcw, Move, Plus, Minus } from "lucide-react";
+import { RefreshCw, X, Edit, Copy, RotateCcw, Move, Plus, Minus, ArrowLeftRight, ArrowUpDown } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import bodyFront from "@/assets/body-front-workout.png";
 import bodyBack from "@/assets/body-back-workout.png";
@@ -66,9 +66,19 @@ interface CustomPosition {
   right?: string;
 }
 
+interface LabelSize {
+  width: number; // percentage
+  height: number; // percentage
+}
+
 type CustomPositions = {
   front: Partial<Record<MuscleGroup, CustomPosition>>;
   back: Partial<Record<MuscleGroup, CustomPosition>>;
+};
+
+type LabelSizes = {
+  front: Partial<Record<MuscleGroup, LabelSize>>;
+  back: Partial<Record<MuscleGroup, LabelSize>>;
 };
 
 export function WorkoutMuscleSelector() {
@@ -77,9 +87,11 @@ export function WorkoutMuscleSelector() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [customPositions, setCustomPositions] = useState<CustomPositions>({ front: {}, back: {} });
+  const [labelSizes, setLabelSizes] = useState<LabelSizes>({ front: {}, back: {} });
   const [draggedLabel, setDraggedLabel] = useState<MuscleGroup | null>(null);
   const [showCoordinates, setShowCoordinates] = useState(false);
   const [labelFontSize, setLabelFontSize] = useState(14); // Default 14px
+  const [selectedLabelForResize, setSelectedLabelForResize] = useState<MuscleGroup | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragStartPos = useRef({ x: 0, y: 0, labelTop: 0, labelLeft: 0 });
 
@@ -99,7 +111,11 @@ export function WorkoutMuscleSelector() {
   };
 
   const handleMuscleSelect = (muscle: MuscleGroup) => {
-    if (isEditMode) return; // Disable click in edit mode
+    if (isEditMode) {
+      // No modo de edição, seleciona o label para redimensionar
+      setSelectedLabelForResize(muscle);
+      return;
+    }
     setSelectedMuscle(muscle);
     setIsDialogOpen(true);
   };
@@ -223,6 +239,28 @@ export function WorkoutMuscleSelector() {
     }
   }, [isEditMode, draggedLabel]);
 
+  const adjustLabelSize = (muscle: MuscleGroup, dimension: 'width' | 'height', delta: number) => {
+    setLabelSizes(prev => {
+      const currentSize = prev[view][muscle] || { width: 100, height: 100 };
+      const newSize = {
+        ...currentSize,
+        [dimension]: Math.max(50, Math.min(200, currentSize[dimension] + delta))
+      };
+      
+      return {
+        ...prev,
+        [view]: {
+          ...prev[view],
+          [muscle]: newSize
+        }
+      };
+    });
+  };
+
+  const getLabelSize = (muscle: MuscleGroup): LabelSize => {
+    return labelSizes[view][muscle] || { width: 100, height: 100 };
+  };
+
   const editedCount = Object.keys(customPositions.front).length + Object.keys(customPositions.back).length;
 
   return (
@@ -291,6 +329,85 @@ export function WorkoutMuscleSelector() {
             <Plus className="w-4 h-4" />
           </Button>
         </div>
+
+        {/* Size Controls - Show when a label is selected in edit mode */}
+        {isEditMode && selectedLabelForResize && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-blue-900">
+                Ajustar Tamanho: {labels.find(l => l.muscle === selectedLabelForResize)?.name}
+              </h3>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setSelectedLabelForResize(null)}
+                className="h-6 w-6"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {/* Horizontal Size Control */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <ArrowLeftRight className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-900">Largura:</span>
+                  <span className="text-sm text-blue-700 ml-auto">
+                    {getLabelSize(selectedLabelForResize).width}%
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustLabelSize(selectedLabelForResize, 'width', -5)}
+                    className="flex-1"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustLabelSize(selectedLabelForResize, 'width', 5)}
+                    className="flex-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Vertical Size Control */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-900">Altura:</span>
+                  <span className="text-sm text-blue-700 ml-auto">
+                    {getLabelSize(selectedLabelForResize).height}%
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustLabelSize(selectedLabelForResize, 'height', -5)}
+                    className="flex-1"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustLabelSize(selectedLabelForResize, 'height', 5)}
+                    className="flex-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Muscle Map */}
@@ -311,24 +428,30 @@ export function WorkoutMuscleSelector() {
             {labels.map((label) => {
               const position = getEffectivePosition(label);
               const isDragging = draggedLabel === label.muscle;
+              const isSelected = selectedLabelForResize === label.muscle;
+              const labelSize = getLabelSize(label.muscle);
               
               return (
                 <div
                   key={label.muscle}
                   className={`absolute pointer-events-auto group ${
                     isEditMode ? 'cursor-move' : 'cursor-pointer'
-                  } ${isDragging ? 'opacity-70 scale-105' : ''} transition-all duration-100`}
+                  } ${isDragging ? 'opacity-70 scale-105' : ''} ${
+                    isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                  } transition-all duration-100`}
                   style={{ 
                     top: position.top,
                     left: position.left,
-                    right: position.right
+                    right: position.right,
+                    transform: `scale(${labelSize.width / 100}, ${labelSize.height / 100})`,
+                    transformOrigin: label.side === "left" ? "left center" : "right center"
                   }}
                   onClick={() => handleMuscleSelect(label.muscle)}
                   onMouseDown={(e) => handleMouseDown(e, label)}
                 >
                   <div className={`flex items-center ${label.side === "left" ? "flex-row" : "flex-row-reverse"} gap-1 ${
                     isEditMode ? 'border-2 border-dashed border-blue-400 rounded px-1' : ''
-                  }`}>
+                  } ${isSelected ? 'bg-blue-100' : ''}`}>
                     {isEditMode && (
                       <Move className="w-3 h-3 text-blue-500" />
                     )}
