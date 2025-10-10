@@ -37,27 +37,27 @@ interface MuscleLabel {
 }
 
 const frontLabels: MuscleLabel[] = [
-  { name: "Ombros", muscle: "ombros", side: "left", left: "5%", top: "13%" },
-  { name: "Bíceps", muscle: "biceps", side: "left", left: "5%", top: "31%" },
-  { name: "Oblíquos", muscle: "obliquos", side: "left", left: "5%", top: "44%" },
-  { name: "Abdutores", muscle: "abdutores", side: "left", left: "5%", top: "57%" },
-  { name: "Quadríceps", muscle: "quadriceps", side: "left", left: "5%", top: "71%" },
-  { name: "Peitoral", muscle: "peitoral", side: "right", right: "5%", top: "18%" },
-  { name: "Abdômen", muscle: "abdomen", side: "right", right: "5%", top: "36%" },
-  { name: "Antebraços", muscle: "antebracos", side: "right", right: "5%", top: "50%" },
-  { name: "Adutores", muscle: "adutores", side: "right", right: "5%", top: "63%" },
-  { name: "Cardio", muscle: "cardio", side: "right", right: "5%", top: "76%" },
+  { name: "Ombros", muscle: "ombros", side: "left", left: "0.7%", top: "29.2%" },
+  { name: "Bíceps", muscle: "biceps", side: "left", left: "0.0%", top: "39.0%" },
+  { name: "Oblíquos", muscle: "obliquos", side: "left", left: "0.0%", top: "47.1%" },
+  { name: "Abdutores", muscle: "abdutores", side: "left", left: "0.0%", top: "57.3%" },
+  { name: "Quadríceps", muscle: "quadriceps", side: "left", left: "0.0%", top: "70.5%" },
+  { name: "Peitoral", muscle: "peitoral", side: "right", right: "0.0%", top: "33.4%" },
+  { name: "Abdômen", muscle: "abdomen", side: "right", right: "6.8%", top: "42.5%" },
+  { name: "Antebraços", muscle: "antebracos", side: "right", right: "1.1%", top: "51.6%" },
+  { name: "Adutores", muscle: "adutores", side: "right", right: "1.1%", top: "61.2%" },
+  { name: "Cardio", muscle: "cardio", side: "right", right: "0.0%", top: "81.2%" }
 ];
 
 const backLabels: MuscleLabel[] = [
-  { name: "Trapézio", muscle: "trapezio", side: "right", right: "5%", top: "12%" },
-  { name: "Tríceps", muscle: "triceps", side: "left", left: "5%", top: "28%" },
-  { name: "Dorsais", muscle: "dorsais", side: "right", right: "5%", top: "31%" },
-  { name: "Lombares", muscle: "lombares", side: "left", left: "5%", top: "44%" },
-  { name: "Glúteos", muscle: "gluteos", side: "right", right: "5%", top: "52%" },
-  { name: "Isquiotibiais", muscle: "isquiotibiais", side: "left", left: "5%", top: "65%" },
-  { name: "Panturrilhas", muscle: "panturrilhas", side: "left", left: "5%", top: "80%" },
-  { name: "Cardio", muscle: "cardio", side: "right", right: "5%", top: "69%" },
+  { name: "Trapézio", muscle: "trapezio", side: "right", right: "0.0%", top: "26.8%" },
+  { name: "Tríceps", muscle: "triceps", side: "left", left: "0.0%", top: "39.3%" },
+  { name: "Dorsais", muscle: "dorsais", side: "right", right: "0.0%", top: "39.8%" },
+  { name: "Lombares", muscle: "lombares", side: "left", left: "3.2%", top: "47.4%" },
+  { name: "Glúteos", muscle: "gluteos", side: "right", right: "1.8%", top: "54.9%" },
+  { name: "Isquiotibiais", muscle: "isquiotibiais", side: "left", left: "7.9%", top: "65.2%" },
+  { name: "Panturrilhas", muscle: "panturrilhas", side: "left", left: "1.4%", top: "87.7%" },
+  { name: "Cardio", muscle: "cardio", side: "right", right: "0.0%", top: "81.1%" }
 ];
 
 interface CustomPosition {
