@@ -118,11 +118,15 @@ export function WorkoutMuscleSelector() {
     const currentTopPercent = parseFloat(currentPos.top);
     const currentTopPx = (currentTopPercent / 100) * rect.height;
     
+    // Calculate initial horizontal position
+    const currentHorizontalPercent = parseFloat(currentPos.left || currentPos.right || "0");
+    const currentHorizontalPx = (currentHorizontalPercent / 100) * rect.width;
+    
     dragStartPos.current = {
       x: e.clientX,
       y: e.clientY,
       labelTop: currentTopPx,
-      labelLeft: 0 // Will be calculated based on mouse position
+      labelLeft: currentHorizontalPx
     };
   };
 
@@ -132,25 +136,24 @@ export function WorkoutMuscleSelector() {
     const container = containerRef.current;
     const rect = container.getBoundingClientRect();
     
-    // Calculate new position based on current mouse position
-    const mouseY = e.clientY - rect.top;
+    // Calculate new vertical position
     const deltaY = e.clientY - dragStartPos.current.y;
     const newTopPx = dragStartPos.current.labelTop + deltaY;
-    
-    // Convert to percentage and clamp
     const newTopPercent = Math.max(0, Math.min(100, (newTopPx / rect.height) * 100));
     
-    // For horizontal position, keep it fixed (don't change left/right based on mouse movement)
+    // Calculate new horizontal position
+    const deltaX = e.clientX - dragStartPos.current.x;
+    const newHorizontalPx = dragStartPos.current.labelLeft + deltaX;
+    const newHorizontalPercent = Math.max(0, Math.min(100, (newHorizontalPx / rect.width) * 100));
+    
     const label = labels.find(l => l.muscle === draggedLabel);
     if (!label) return;
-    
-    const currentPos = getEffectivePosition(label);
     
     const newPosition: CustomPosition = {
       top: `${newTopPercent.toFixed(1)}%`,
       ...(label.side === "left" 
-        ? { left: currentPos.left } 
-        : { right: currentPos.right })
+        ? { left: `${newHorizontalPercent.toFixed(1)}%` } 
+        : { right: `${newHorizontalPercent.toFixed(1)}%` })
     };
 
     setCustomPositions(prev => ({
