@@ -197,6 +197,7 @@ export function WorkoutMuscleSelector() {
   const handleMouseUp = () => {
     if (draggedLabel) {
       setDraggedLabel(null);
+      saveEditorState();
     }
   };
 
@@ -339,6 +340,16 @@ export function WorkoutMuscleSelector() {
     }
   }, [customPositions, labelSizes, connectorStyles, labelFontSize]);
 
+  // Salva explicitamente o estado do editor
+  const saveEditorState = () => {
+    try {
+      const payload = { customPositions, labelSizes, connectorStyles, labelFontSize };
+      localStorage.setItem('workout_muscle_editor_state', JSON.stringify(payload));
+    } catch (err) {
+      console.error('Falha ao salvar estado do editor', err);
+    }
+  };
+
   const editedCount = Object.keys(customPositions.front).length + Object.keys(customPositions.back).length;
 
   return (
@@ -348,7 +359,14 @@ export function WorkoutMuscleSelector() {
         {/* Main Controls */}
         <div className="flex items-center gap-3 flex-wrap">
           <Button
-            onClick={() => setIsEditMode(!isEditMode)}
+            onClick={() => {
+              const next = !isEditMode;
+              if (!next) {
+                saveEditorState();
+                toast({ title: 'Alterações salvas', description: 'Suas edições foram aplicadas.' });
+              }
+              setIsEditMode(next);
+            }}
             variant={isEditMode ? "default" : "outline"}
             className={isEditMode ? "bg-blue-500 hover:bg-blue-600" : ""}
           >
