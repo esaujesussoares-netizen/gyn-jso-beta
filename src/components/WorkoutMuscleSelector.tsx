@@ -619,9 +619,7 @@ export function WorkoutMuscleSelector() {
                   onMouseDown={(e) => handleMouseDown(e, label)}
                 >
                   <div className={`flex items-center ${
-                    connectorStyle.flipped 
-                      ? (label.side === "left" ? "flex-row-reverse" : "flex-row")
-                      : (label.side === "left" ? "flex-row" : "flex-row-reverse")
+                    label.side === "left" ? "flex-row" : "flex-row-reverse"
                   } gap-1 ${
                     isEditMode ? 'border-2 border-dashed border-blue-400 rounded px-1' : ''
                   } ${isSelected ? 'bg-blue-100' : ''}`}>
@@ -643,7 +641,7 @@ export function WorkoutMuscleSelector() {
                       {label.name}
                     </div>
 
-                    <div className={`relative flex items-center ${connectorStyle.flipped ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <div className={`relative flex items-center ${label.side === "left" ? (connectorStyle.flipped ? 'flex-row-reverse' : 'flex-row') : (connectorStyle.flipped ? 'flex-row' : 'flex-row-reverse')}`}>
                       <div
                         className={`h-px ${
                           selectedMuscle === label.muscle ? "bg-[#ff8c42]" : "bg-gray-600 group-hover:bg-[#ff8c42]"
