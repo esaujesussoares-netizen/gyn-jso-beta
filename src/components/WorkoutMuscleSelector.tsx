@@ -475,10 +475,10 @@ export function WorkoutMuscleSelector() {
                         className={`h-px ${
                           selectedMuscle === label.muscle ? "bg-[#ff8c42]" : "bg-gray-600 group-hover:bg-[#ff8c42]"
                         } transition-colors duration-200`}
-                        style={{ width: "32px" }}
+                        style={{ width: "24px" }}
                       />
                       <div
-                        className={`w-2 h-2 rounded-full ${
+                        className={`w-1.5 h-1.5 rounded-full ${
                           selectedMuscle === label.muscle ? "bg-[#ff8c42]" : "bg-gray-600 group-hover:bg-[#ff8c42]"
                         } transition-colors duration-200`}
                       />
