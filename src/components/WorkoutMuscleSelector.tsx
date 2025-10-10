@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ExerciseList } from "@/components/ExerciseList";
-import { RefreshCw, X, Edit, Copy, RotateCcw, Move, Plus, Minus, ArrowLeftRight, ArrowUpDown } from "lucide-react";
+import { RefreshCw, X, Edit, Copy, RotateCcw, Move, Plus, Minus, ArrowLeftRight, ArrowUpDown, ChevronDown } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import bodyFront from "@/assets/body-front-workout.png";
 import bodyBack from "@/assets/body-back-workout.png";
@@ -92,6 +92,7 @@ export function WorkoutMuscleSelector() {
   const [showCoordinates, setShowCoordinates] = useState(false);
   const [labelFontSize, setLabelFontSize] = useState(14); // Default 14px
   const [selectedLabelForResize, setSelectedLabelForResize] = useState<MuscleGroup | null>(null);
+  const [showLabelOptions, setShowLabelOptions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragStartPos = useRef({ x: 0, y: 0, labelTop: 0, labelLeft: 0 });
 
@@ -329,6 +330,44 @@ export function WorkoutMuscleSelector() {
             <Plus className="w-4 h-4" />
           </Button>
         </div>
+
+        {/* Label Selection Dropdown - Show in edit mode */}
+        {isEditMode && (
+          <div className="pt-2 border-t">
+            <Button
+              onClick={() => setShowLabelOptions(!showLabelOptions)}
+              variant="outline"
+              className="w-full justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <Edit className="w-4 h-4" />
+                {selectedLabelForResize 
+                  ? `Editando: ${labels.find(l => l.muscle === selectedLabelForResize)?.name}` 
+                  : "Selecionar Label para Editar"}
+              </span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${showLabelOptions ? 'rotate-180' : ''}`} />
+            </Button>
+            
+            {showLabelOptions && (
+              <div className="mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto z-50">
+                {labels.map((label) => (
+                  <button
+                    key={label.muscle}
+                    onClick={() => {
+                      setSelectedLabelForResize(label.muscle);
+                      setShowLabelOptions(false);
+                    }}
+                    className={`w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors ${
+                      selectedLabelForResize === label.muscle ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700'
+                    }`}
+                  >
+                    {label.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Size Controls - Show when a label is selected in edit mode */}
         {isEditMode && selectedLabelForResize && (
