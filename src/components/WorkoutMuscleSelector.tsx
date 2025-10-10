@@ -71,6 +71,11 @@ interface LabelSize {
   height: number; // percentage
 }
 
+interface ConnectorStyle {
+  lineWidth: number; // pixels
+  dotSize: number; // pixels
+}
+
 type CustomPositions = {
   front: Partial<Record<MuscleGroup, CustomPosition>>;
   back: Partial<Record<MuscleGroup, CustomPosition>>;
@@ -81,6 +86,11 @@ type LabelSizes = {
   back: Partial<Record<MuscleGroup, LabelSize>>;
 };
 
+type ConnectorStyles = {
+  front: Partial<Record<MuscleGroup, ConnectorStyle>>;
+  back: Partial<Record<MuscleGroup, ConnectorStyle>>;
+};
+
 export function WorkoutMuscleSelector() {
   const [view, setView] = useState<"front" | "back">("front");
   const [selectedMuscle, setSelectedMuscle] = useState<MuscleGroup | null>(null);
@@ -88,6 +98,7 @@ export function WorkoutMuscleSelector() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [customPositions, setCustomPositions] = useState<CustomPositions>({ front: {}, back: {} });
   const [labelSizes, setLabelSizes] = useState<LabelSizes>({ front: {}, back: {} });
+  const [connectorStyles, setConnectorStyles] = useState<ConnectorStyles>({ front: {}, back: {} });
   const [draggedLabel, setDraggedLabel] = useState<MuscleGroup | null>(null);
   const [showCoordinates, setShowCoordinates] = useState(false);
   const [labelFontSize, setLabelFontSize] = useState(14); // Default 14px
@@ -260,6 +271,28 @@ export function WorkoutMuscleSelector() {
 
   const getLabelSize = (muscle: MuscleGroup): LabelSize => {
     return labelSizes[view][muscle] || { width: 100, height: 100 };
+  };
+
+  const adjustConnectorStyle = (muscle: MuscleGroup, property: 'lineWidth' | 'dotSize', delta: number) => {
+    setConnectorStyles(prev => {
+      const currentStyle = prev[view][muscle] || { lineWidth: 24, dotSize: 6 };
+      const newStyle = {
+        ...currentStyle,
+        [property]: Math.max(property === 'lineWidth' ? 12 : 3, Math.min(property === 'lineWidth' ? 48 : 12, currentStyle[property] + delta))
+      };
+      
+      return {
+        ...prev,
+        [view]: {
+          ...prev[view],
+          [muscle]: newStyle
+        }
+      };
+    });
+  };
+
+  const getConnectorStyle = (muscle: MuscleGroup): ConnectorStyle => {
+    return connectorStyles[view][muscle] || { lineWidth: 24, dotSize: 6 };
   };
 
   const editedCount = Object.keys(customPositions.front).length + Object.keys(customPositions.back).length;
@@ -444,6 +477,70 @@ export function WorkoutMuscleSelector() {
                   </Button>
                 </div>
               </div>
+
+              {/* Connector Controls */}
+              <div className="col-span-2 space-y-2 pt-2 border-t border-blue-200">
+                <h4 className="text-sm font-semibold text-blue-900">Conector (Linha e Ponto)</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Line Width Control */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <ArrowLeftRight className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-900">Linha:</span>
+                      <span className="text-sm text-blue-700 ml-auto">
+                        {getConnectorStyle(selectedLabelForResize).lineWidth}px
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => adjustConnectorStyle(selectedLabelForResize, 'lineWidth', -2)}
+                        className="flex-1"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => adjustConnectorStyle(selectedLabelForResize, 'lineWidth', 2)}
+                        className="flex-1"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Dot Size Control */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-blue-600" />
+                      <span className="text-sm font-medium text-blue-900">Ponto:</span>
+                      <span className="text-sm text-blue-700 ml-auto">
+                        {getConnectorStyle(selectedLabelForResize).dotSize}px
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => adjustConnectorStyle(selectedLabelForResize, 'dotSize', -1)}
+                        className="flex-1"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => adjustConnectorStyle(selectedLabelForResize, 'dotSize', 1)}
+                        className="flex-1"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -469,6 +566,7 @@ export function WorkoutMuscleSelector() {
               const isDragging = draggedLabel === label.muscle;
               const isSelected = selectedLabelForResize === label.muscle;
               const labelSize = getLabelSize(label.muscle);
+              const connectorStyle = getConnectorStyle(label.muscle);
               
               return (
                 <div
@@ -514,12 +612,16 @@ export function WorkoutMuscleSelector() {
                         className={`h-px ${
                           selectedMuscle === label.muscle ? "bg-[#ff8c42]" : "bg-gray-600 group-hover:bg-[#ff8c42]"
                         } transition-colors duration-200`}
-                        style={{ width: "24px" }}
+                        style={{ width: `${connectorStyle.lineWidth}px` }}
                       />
                       <div
-                        className={`w-1.5 h-1.5 rounded-full ${
+                        className={`rounded-full ${
                           selectedMuscle === label.muscle ? "bg-[#ff8c42]" : "bg-gray-600 group-hover:bg-[#ff8c42]"
                         } transition-colors duration-200`}
+                        style={{ 
+                          width: `${connectorStyle.dotSize}px`, 
+                          height: `${connectorStyle.dotSize}px` 
+                        }}
                       />
                     </div>
                   </div>
