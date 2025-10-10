@@ -643,7 +643,7 @@ export function WorkoutMuscleSelector() {
                       {label.name}
                     </div>
 
-                    <div className="relative flex items-center">
+                    <div className={`relative flex items-center ${connectorStyle.flipped ? 'flex-row-reverse' : 'flex-row'}`}>
                       <div
                         className={`h-px ${
                           selectedMuscle === label.muscle ? "bg-[#ff8c42]" : "bg-gray-600 group-hover:bg-[#ff8c42]"
