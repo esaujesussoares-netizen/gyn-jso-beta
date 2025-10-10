@@ -314,6 +314,31 @@ export function WorkoutMuscleSelector() {
     return connectorStyles[view][muscle] || { lineWidth: 24, dotSize: 6, flipped: false };
   };
 
+  // Persistência do Modo Editor no localStorage (NOVO)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('workout_muscle_editor_state');
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data.customPositions) setCustomPositions(data.customPositions);
+        if (data.labelSizes) setLabelSizes(data.labelSizes);
+        if (data.connectorStyles) setConnectorStyles(data.connectorStyles);
+        if (typeof data.labelFontSize === 'number') setLabelFontSize(data.labelFontSize);
+      }
+    } catch (err) {
+      console.error('Falha ao carregar estado do editor', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const payload = { customPositions, labelSizes, connectorStyles, labelFontSize };
+      localStorage.setItem('workout_muscle_editor_state', JSON.stringify(payload));
+    } catch (err) {
+      console.error('Falha ao salvar estado do editor', err);
+    }
+  }, [customPositions, labelSizes, connectorStyles, labelFontSize]);
+
   const editedCount = Object.keys(customPositions.front).length + Object.keys(customPositions.back).length;
 
   return (
