@@ -62,7 +62,7 @@ const Index = () => {
                 variant="hero" 
                 size="lg" 
                 className="w-full sm:w-auto"
-                onClick={() => handleProtectedAction("/dashboard")}
+                onClick={() => setOnboardingDialogOpen(true)}
               >
                 <Zap className="w-5 h-5" />
                 Começar Agora
@@ -71,7 +71,7 @@ const Index = () => {
                 variant="outline" 
                 size="lg" 
                 className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10"
-                onClick={() => handleProtectedAction("/dashboard")}
+                onClick={() => setOnboardingDialogOpen(true)}
               >
                 Ver Demo
               </Button>
@@ -193,7 +193,7 @@ const Index = () => {
             <Button 
               variant="hero" 
               size="lg"
-              onClick={() => handleProtectedAction("/dashboard")}
+              onClick={() => setOnboardingDialogOpen(true)}
             >
               <Zap className="w-5 h-5" />
               Iniciar Jornada Gratuita
