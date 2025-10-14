@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Edit2, Save, RotateCw } from 'lucide-react';
+import { 
+  X, Edit2, Save, RotateCw, 
+  ZoomIn, ZoomOut, Type, Palette 
+} from 'lucide-react';
 import bodyFrontImg from '@/assets/body-front.png';
 import bodyBackImg from '@/assets/body-back.png';
 
@@ -11,37 +14,46 @@ interface MuscleLabel {
   width: number;
   height: number;
   rotation: number;
-  view: 'front' | 'back';
+  color: string;
 }
 
 export function WorkoutMuscleSelector() {
   const [editorMode, setEditorMode] = useState(false);
   const [selectedAreas, setSelectedAreas] = useState<number[]>([]);
   const [currentView, setCurrentView] = useState<'front' | 'back'>('front');
-  const [muscleLabels, setMuscleLabels] = useState<MuscleLabel[]>([
-    // Vista Frontal
-    { id: 1, name: "Ombros", x: 45, y: 15, width: 80, height: 30, rotation: 0, view: 'front' },
-    { id: 2, name: "Peitoral", x: 40, y: 25, width: 100, height: 25, rotation: 0, view: 'front' },
-    { id: 3, name: "Bíceps", x: 20, y: 35, width: 70, height: 25, rotation: 0, view: 'front' },
-    { id: 4, name: "Abdômen", x: 45, y: 45, width: 80, height: 25, rotation: 0, view: 'front' },
-    { id: 5, name: "Oblíquos", x: 35, y: 50, width: 90, height: 25, rotation: -5, view: 'front' },
-    { id: 6, name: "Quadríceps", x: 45, y: 65, width: 90, height: 25, rotation: 0, view: 'front' },
-    { id: 7, name: "Panturrilhas", x: 45, y: 85, width: 90, height: 25, rotation: 0, view: 'front' },
-    // Vista Traseira
-    { id: 8, name: "Trapézio", x: 45, y: 10, width: 80, height: 25, rotation: 0, view: 'back' },
-    { id: 9, name: "Dorsais", x: 45, y: 30, width: 80, height: 25, rotation: 0, view: 'back' },
-    { id: 10, name: "Tríceps", x: 70, y: 35, width: 70, height: 25, rotation: 0, view: 'back' },
-    { id: 11, name: "Lombares", x: 45, y: 40, width: 90, height: 25, rotation: 0, view: 'back' },
-    { id: 12, name: "Glúteos", x: 45, y: 55, width: 80, height: 25, rotation: 0, view: 'back' },
-    { id: 13, name: "Isquiotibiais", x: 45, y: 75, width: 100, height: 25, rotation: 0, view: 'back' },
-    { id: 14, name: "Cardio", x: 80, y: 90, width: 60, height: 25, rotation: 0, view: 'back' }
-  ]);
+  const [zoom, setZoom] = useState(1);
+  const [editingLabel, setEditingLabel] = useState<number | null>(null);
+  
+  const [muscleLabels, setMuscleLabels] = useState<{
+    front: MuscleLabel[];
+    back: MuscleLabel[];
+  }>({
+    front: [
+      { id: 1, name: "Ombros", x: 45, y: 15, width: 80, height: 30, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 2, name: "Peitoral", x: 40, y: 25, width: 100, height: 25, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 3, name: "Bíceps", x: 20, y: 35, width: 70, height: 25, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 4, name: "Abdômen", x: 45, y: 45, width: 80, height: 25, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 5, name: "Oblíquos", x: 35, y: 50, width: 90, height: 25, rotation: -5, color: "hsl(var(--primary))" },
+      { id: 6, name: "Quadríceps", x: 45, y: 65, width: 90, height: 25, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 7, name: "Panturrilhas", x: 45, y: 85, width: 90, height: 25, rotation: 0, color: "hsl(var(--primary))" }
+    ],
+    back: [
+      { id: 8, name: "Trapézio", x: 45, y: 10, width: 80, height: 25, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 9, name: "Dorsais", x: 45, y: 25, width: 80, height: 25, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 10, name: "Tríceps", x: 70, y: 35, width: 70, height: 25, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 11, name: "Lombares", x: 45, y: 40, width: 90, height: 25, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 12, name: "Glúteos", x: 45, y: 55, width: 80, height: 25, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 13, name: "Isquiotibiais", x: 45, y: 70, width: 100, height: 25, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 14, name: "Cardio", x: 80, y: 90, width: 60, height: 25, rotation: 0, color: "hsl(var(--accent))" }
+    ]
+  });
 
   const [draggingLabel, setDraggingLabel] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Função para selecionar/deselecionar área muscular
+  const currentLabels = muscleLabels[currentView];
+
   const toggleMuscleSelection = (muscleId: number) => {
     if (editorMode) return;
     
@@ -52,15 +64,14 @@ export function WorkoutMuscleSelector() {
     );
   };
 
-  // Função para iniciar arrasto no modo editor
   const startDrag = (e: React.MouseEvent, label: MuscleLabel) => {
     if (!editorMode) return;
     
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) / zoom;
+    const y = (e.clientY - rect.top) / zoom;
     
     setDraggingLabel(label.id);
     setDragOffset({
@@ -72,56 +83,82 @@ export function WorkoutMuscleSelector() {
     e.stopPropagation();
   };
 
-  // Função durante arrasto
   const handleDrag = (e: React.MouseEvent) => {
     if (!draggingLabel || !editorMode) return;
     
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     
-    const x = e.clientX - rect.left - dragOffset.x;
-    const y = e.clientY - rect.top - dragOffset.y;
+    const x = ((e.clientX - rect.left) / zoom) - dragOffset.x;
+    const y = ((e.clientY - rect.top) / zoom) - dragOffset.y;
     
-    setMuscleLabels(prev => 
-      prev.map(label => 
+    setMuscleLabels(prev => ({
+      ...prev,
+      [currentView]: prev[currentView].map(label => 
         label.id === draggingLabel 
-          ? { ...label, x: Math.max(0, Math.min(95, x)), y: Math.max(0, Math.min(95, y)) }
+          ? { 
+              ...label, 
+              x: Math.max(0, Math.min(95, x)), 
+              y: Math.max(0, Math.min(95, y)) 
+            }
           : label
       )
-    );
+    }));
   };
 
-  // Função para finalizar arrasto
   const endDrag = () => {
     setDraggingLabel(null);
   };
 
-  // Rotacionar label
-  const rotateLabel = (muscleId: number) => {
-    setMuscleLabels(prev =>
-      prev.map(label =>
-        label.id === muscleId
+  const rotateLabel = (labelId: number) => {
+    setMuscleLabels(prev => ({
+      ...prev,
+      [currentView]: prev[currentView].map(label =>
+        label.id === labelId
           ? { ...label, rotation: (label.rotation + 15) % 360 }
           : label
       )
-    );
+    }));
   };
 
-  // Salvar posições
+  const resizeLabel = (labelId: number, widthChange: number, heightChange: number) => {
+    setMuscleLabels(prev => ({
+      ...prev,
+      [currentView]: prev[currentView].map(label =>
+        label.id === labelId
+          ? { 
+              ...label, 
+              width: Math.max(40, label.width + widthChange),
+              height: Math.max(20, label.height + heightChange)
+            }
+          : label
+      )
+    }));
+  };
+
+  const changeLabelColor = (labelId: number, color: string) => {
+    setMuscleLabels(prev => ({
+      ...prev,
+      [currentView]: prev[currentView].map(label =>
+        label.id === labelId
+          ? { ...label, color }
+          : label
+      )
+    }));
+  };
+
   const savePositions = () => {
-    localStorage.setItem('muscleLabelsPositions', JSON.stringify(muscleLabels));
+    localStorage.setItem('muscleLabelsConfig', JSON.stringify(muscleLabels));
     setEditorMode(false);
   };
 
-  // Carregar posições salvas
   useEffect(() => {
-    const saved = localStorage.getItem('muscleLabelsPositions');
+    const saved = localStorage.getItem('muscleLabelsConfig');
     if (saved) {
       setMuscleLabels(JSON.parse(saved));
     }
   }, []);
 
-  const currentLabels = muscleLabels.filter(label => label.view === currentView);
   const currentImage = currentView === 'front' ? bodyFrontImg : bodyBackImg;
 
   return (
@@ -130,13 +167,30 @@ export function WorkoutMuscleSelector() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-foreground">Selecionar Grupos Musculares</h2>
         <div className="flex gap-2">
+          {/* Controles de Zoom */}
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+            <button 
+              onClick={() => setZoom(prev => Math.max(0.5, prev - 0.1))}
+              className="p-2 hover:bg-muted/80 rounded transition-colors"
+            >
+              <ZoomOut size={18} />
+            </button>
+            <span className="text-sm px-2">{(zoom * 100).toFixed(0)}%</span>
+            <button 
+              onClick={() => setZoom(prev => Math.min(2, prev + 0.1))}
+              className="p-2 hover:bg-muted/80 rounded transition-colors"
+            >
+              <ZoomIn size={18} />
+            </button>
+          </div>
+
           {editorMode && (
             <button 
               onClick={savePositions}
               className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
               <Save size={18} />
-              Salvar Posições
+              Salvar
             </button>
           )}
           <button 
@@ -148,7 +202,7 @@ export function WorkoutMuscleSelector() {
             }`}
           >
             <Edit2 size={18} />
-            {editorMode ? 'Sair do Editor' : 'Modo Editor'}
+            {editorMode ? 'Sair Editor' : 'Modo Editor'}
           </button>
         </div>
       </div>
@@ -162,26 +216,33 @@ export function WorkoutMuscleSelector() {
             </h3>
             <button
               onClick={() => setCurrentView(currentView === 'front' ? 'back' : 'front')}
-              className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors"
+              className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors shadow-md"
             >
               <RotateCw size={18} />
-              {currentView === 'front' ? 'Ver Costas' : 'Ver Frente'}
+              Rotacionar
             </button>
           </div>
           
-          <div 
-            ref={containerRef}
-            className="relative bg-muted rounded-lg aspect-[3/4] max-h-[600px] border-2 border-border overflow-hidden"
-            onMouseMove={handleDrag}
-            onMouseUp={endDrag}
-            onMouseLeave={endDrag}
-          >
-            {/* Imagem do corpo humano */}
-            <img 
-              src={currentImage} 
-              alt={`Vista ${currentView === 'front' ? 'frontal' : 'traseira'}`}
-              className="absolute inset-0 w-full h-full object-contain"
-            />
+          <div className="flex justify-center items-center bg-muted/50 rounded-xl p-4 border-2 border-dashed border-border">
+            <div 
+              ref={containerRef}
+              className="relative bg-background rounded-lg shadow-lg overflow-hidden"
+              style={{ 
+                width: '400px', 
+                height: '600px',
+                transform: `scale(${zoom})`,
+                transition: 'all 0.3s ease-in-out'
+              }}
+              onMouseMove={handleDrag}
+              onMouseUp={endDrag}
+              onMouseLeave={endDrag}
+            >
+              {/* Imagem do corpo humano */}
+              <img 
+                src={currentImage} 
+                alt={`Vista ${currentView === 'front' ? 'frontal' : 'traseira'}`}
+                className="absolute inset-0 w-full h-full object-contain"
+              />
 
             {/* Labels dos músculos */}
             {currentLabels.map((label) => (
@@ -210,55 +271,125 @@ export function WorkoutMuscleSelector() {
                 
                 {/* Controles do editor */}
                 {editorMode && (
-                  <div className="absolute -top-6 -right-2 flex gap-1">
+                  <div className="absolute -top-8 -right-2 flex gap-1">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         rotateLabel(label.id);
                       }}
                       className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
+                      title="Rotacionar"
                     >
                       <RotateCw size={12} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingLabel(label.id);
+                      }}
+                      className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
+                      title="Alterar Cor"
+                    >
+                      <Palette size={12} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        resizeLabel(label.id, 10, 5);
+                      }}
+                      className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
+                      title="Aumentar"
+                    >
+                      <Type size={12} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        resizeLabel(label.id, -10, -5);
+                      }}
+                      className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
+                      title="Diminuir"
+                    >
+                      <ZoomOut size={12} />
                     </button>
                   </div>
                 )}
               </div>
             ))}
+            </div>
           </div>
 
           {editorMode && (
-            <p className="text-sm text-muted-foreground mt-2">
-              💡 Arraste para mover, clique no ícone para rotacionar
+            <p className="text-sm text-muted-foreground mt-3 text-center">
+              💡 <strong>Editor Ativo:</strong> Arraste para mover • Clique nos ícones para editar
             </p>
           )}
         </div>
 
         {/* Painel de Seleção */}
-        <div>
-          <h3 className="text-lg font-semibold text-foreground mb-4">Áreas Selecionadas</h3>
-          
-          <div className="space-y-3 mb-6 max-h-[400px] overflow-y-auto">
-            {selectedAreas.length === 0 ? (
-              <p className="text-muted-foreground">Nenhuma área selecionada</p>
-            ) : (
-              selectedAreas.map(muscleId => {
-                const muscle = muscleLabels.find(m => m.id === muscleId);
-                return (
-                  <div key={muscleId} className="flex items-center justify-between bg-accent/50 p-3 rounded-lg">
-                    <span className="font-medium text-foreground">{muscle?.name}</span>
-                    <button 
-                      onClick={() => toggleMuscleSelection(muscleId)}
-                      className="text-destructive hover:text-destructive/80 transition-colors"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-                );
-              })
-            )}
+        <div className="space-y-6">
+          <div className="bg-muted/50 rounded-xl p-4">
+            <h3 className="text-lg font-semibold text-foreground mb-3">Áreas Selecionadas</h3>
+            
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {selectedAreas.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">Nenhuma área selecionada</p>
+              ) : (
+                selectedAreas.map(muscleId => {
+                  const allLabels = [...muscleLabels.front, ...muscleLabels.back];
+                  const muscle = allLabels.find(m => m.id === muscleId);
+                  return (
+                    <div key={muscleId} className="flex items-center justify-between bg-background p-3 rounded-lg border border-border">
+                      <span className="font-medium text-foreground">{muscle?.name}</span>
+                      <button 
+                        onClick={() => toggleMuscleSelection(muscleId)}
+                        className="text-destructive hover:text-destructive/80 transition-colors text-sm"
+                      >
+                        Remover
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
 
-          <div className="space-y-2">
+          {/* Seletor de Cores */}
+          {editorMode && editingLabel && (
+            <div className="bg-muted/50 rounded-xl p-4">
+              <h3 className="text-lg font-semibold text-foreground mb-3">Alterar Cor</h3>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  'hsl(var(--primary))',
+                  'hsl(var(--accent))',
+                  'hsl(var(--destructive))',
+                  'hsl(var(--chart-1))',
+                  'hsl(var(--chart-2))',
+                  'hsl(var(--chart-3))',
+                  'hsl(var(--chart-4))',
+                  'hsl(var(--chart-5))'
+                ].map((color, index) => (
+                  <button
+                    key={index}
+                    className="w-8 h-8 rounded-full border-2 border-border shadow-md hover:scale-110 transition-transform"
+                    style={{ backgroundColor: color }}
+                    onClick={() => {
+                      changeLabelColor(editingLabel, color);
+                      setEditingLabel(null);
+                    }}
+                  />
+                ))}
+              </div>
+              <button 
+                onClick={() => setEditingLabel(null)}
+                className="w-full mt-3 bg-muted text-muted-foreground py-2 rounded-lg hover:bg-muted/80 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          )}
+
+          <div className="space-y-3">
             <button
               onClick={() => setSelectedAreas([])}
               disabled={selectedAreas.length === 0}
