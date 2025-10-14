@@ -11,7 +11,7 @@ import { User, Settings, Target, Bell, Crown, Smartphone, Globe, Shield } from "
 const Profile = () => {
   return (
     <Layout>
-      <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="p-4 md:p-6 space-y-6">
         {/* Header */}
         <div className="text-center">
           <div className="w-24 h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
