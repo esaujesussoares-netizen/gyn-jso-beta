@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { 
   X, Edit2, Save, RotateCw, 
   ZoomIn, ZoomOut, Palette,
-  Menu, Smartphone, Monitor
+  Menu, Smartphone, Monitor, Dumbbell
 } from 'lucide-react';
 import bodyFrontImg from '@/assets/body-front.png';
 import bodyBackImg from '@/assets/body-back.png';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface MuscleLabel {
   id: number;
@@ -26,6 +27,10 @@ export function WorkoutMuscleSelector() {
   const [editingLabel, setEditingLabel] = useState<number | null>(null);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // **NOVO: Estado para modal de exercícios**
+  const [showExerciseModal, setShowExerciseModal] = useState(false);
+  const [selectedMuscleForExercises, setSelectedMuscleForExercises] = useState<MuscleLabel | null>(null);
   
   const [muscleLabels, setMuscleLabels] = useState<{
     front: MuscleLabel[];
@@ -75,6 +80,7 @@ export function WorkoutMuscleSelector() {
     return { width: 400, height: 600 };
   };
 
+  // **MODIFICADO: Exibe modal de exercícios ao clicar no músculo**
   const toggleMuscleSelection = (muscleId: number) => {
     if (editorMode) return;
     
@@ -83,6 +89,32 @@ export function WorkoutMuscleSelector() {
         ? prev.filter(id => id !== muscleId)
         : [...prev, muscleId]
     );
+    
+    // Exibir modal de exercícios
+    const allLabels = [...muscleLabels.front, ...muscleLabels.back];
+    const muscle = allLabels.find(m => m.id === muscleId);
+    if (muscle) {
+      setSelectedMuscleForExercises(muscle);
+      setShowExerciseModal(true);
+    }
+  };
+  
+  // **NOVO: Dados de exercícios por grupo muscular**
+  const exercisesByMuscle: Record<string, string[]> = {
+    "Ombros": ["Desenvolvimento com Halteres", "Elevação Lateral", "Desenvolvimento Arnold", "Remada Alta"],
+    "Peitoral": ["Supino Reto", "Supino Inclinado", "Crucifixo", "Flexão de Braços"],
+    "Bíceps": ["Rosca Direta", "Rosca Martelo", "Rosca Concentrada", "Rosca Scott"],
+    "Abdômen": ["Abdominal Supra", "Prancha", "Abdominal Canivete", "Elevação de Pernas"],
+    "Oblíquos": ["Abdominal Oblíquo", "Prancha Lateral", "Russian Twist", "Mountain Climbers"],
+    "Quadríceps": ["Agachamento", "Leg Press", "Cadeira Extensora", "Afundo"],
+    "Panturrilhas": ["Panturrilha em Pé", "Panturrilha Sentado", "Panturrilha no Leg Press"],
+    "Trapézio": ["Encolhimento com Halteres", "Remada Alta", "Face Pull"],
+    "Dorsais": ["Puxada Frontal", "Remada Curvada", "Barra Fixa", "Remada Unilateral"],
+    "Tríceps": ["Tríceps Pulley", "Tríceps Testa", "Mergulho", "Tríceps Coice"],
+    "Lombares": ["Levantamento Terra", "Hiperextensão", "Good Morning"],
+    "Glúteos": ["Agachamento", "Hip Thrust", "Stiff", "Cadeira Abdutora"],
+    "Isquiotibiais": ["Stiff", "Mesa Flexora", "Levantamento Terra", "Afundo Reverso"],
+    "Cardio": ["Corrida", "Bicicleta", "Elíptico", "Pular Corda", "HIIT"]
   };
 
   const startDrag = (e: React.MouseEvent | React.TouchEvent, label: MuscleLabel) => {
@@ -486,6 +518,52 @@ export function WorkoutMuscleSelector() {
           </div>
         </div>
       </div>
+
+      {/* **NOVO: Modal de Exercícios** */}
+      <Dialog open={showExerciseModal} onOpenChange={setShowExerciseModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Dumbbell className="w-5 h-5 text-primary" />
+              Exercícios - {selectedMuscleForExercises?.name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-3 mt-4">
+            {selectedMuscleForExercises && exercisesByMuscle[selectedMuscleForExercises.name] ? (
+              exercisesByMuscle[selectedMuscleForExercises.name].map((exercise, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold text-sm">
+                    {index + 1}
+                  </div>
+                  <span className="text-foreground font-medium">{exercise}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-muted-foreground text-center py-4">
+                Nenhum exercício disponível para este grupo muscular.
+              </p>
+            )}
+          </div>
+          
+          <div className="mt-6 flex gap-2">
+            <button
+              onClick={() => setShowExerciseModal(false)}
+              className="flex-1 bg-muted text-muted-foreground py-2 rounded-lg hover:bg-muted/80 transition-colors font-medium"
+            >
+              Fechar
+            </button>
+            <button
+              className="flex-1 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary/90 transition-colors font-medium"
+            >
+              Adicionar ao Treino
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
