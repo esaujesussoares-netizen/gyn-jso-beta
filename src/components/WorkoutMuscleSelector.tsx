@@ -17,6 +17,7 @@ interface MuscleLabel {
   height: number;
   rotation: number;
   color: string;
+  fontSize?: number; // **NOVO: Tamanho da fonte**
 }
 
 export function WorkoutMuscleSelector() {
@@ -37,22 +38,22 @@ export function WorkoutMuscleSelector() {
     back: MuscleLabel[];
   }>({
     front: [
-      { id: 1, name: "Ombros", x: 45, y: 15, width: 60, height: 24, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 2, name: "Peitoral", x: 40, y: 25, width: 70, height: 22, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 3, name: "Bíceps", x: 20, y: 35, width: 55, height: 22, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 4, name: "Abdômen", x: 45, y: 45, width: 65, height: 22, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 5, name: "Oblíquos", x: 35, y: 50, width: 70, height: 22, rotation: -5, color: "hsl(var(--primary))" },
-      { id: 6, name: "Quadríceps", x: 45, y: 65, width: 75, height: 22, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 7, name: "Panturrilhas", x: 45, y: 85, width: 75, height: 22, rotation: 0, color: "hsl(var(--primary))" }
+      { id: 1, name: "Ombros", x: 45, y: 15, width: 60, height: 24, rotation: 0, color: "hsl(var(--primary))", fontSize: 12 },
+      { id: 2, name: "Peitoral", x: 40, y: 25, width: 70, height: 22, rotation: 0, color: "hsl(var(--primary))", fontSize: 12 },
+      { id: 3, name: "Bíceps", x: 20, y: 35, width: 55, height: 22, rotation: 0, color: "hsl(var(--primary))", fontSize: 12 },
+      { id: 4, name: "Abdômen", x: 45, y: 45, width: 65, height: 22, rotation: 0, color: "hsl(var(--primary))", fontSize: 12 },
+      { id: 5, name: "Oblíquos", x: 35, y: 50, width: 70, height: 22, rotation: -5, color: "hsl(var(--primary))", fontSize: 12 },
+      { id: 6, name: "Quadríceps", x: 45, y: 65, width: 75, height: 22, rotation: 0, color: "hsl(var(--primary))", fontSize: 12 },
+      { id: 7, name: "Panturrilhas", x: 45, y: 85, width: 75, height: 22, rotation: 0, color: "hsl(var(--primary))", fontSize: 12 }
     ],
     back: [
-      { id: 8, name: "Trapézio", x: 45, y: 10, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 9, name: "Dorsais", x: 45, y: 25, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 10, name: "Tríceps", x: 70, y: 35, width: 55, height: 22, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 11, name: "Lombares", x: 45, y: 40, width: 70, height: 22, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 12, name: "Glúteos", x: 45, y: 55, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 13, name: "Isquiotibiais", x: 45, y: 70, width: 80, height: 22, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 14, name: "Cardio", x: 80, y: 90, width: 50, height: 22, rotation: 0, color: "hsl(var(--accent))" }
+      { id: 8, name: "Trapézio", x: 45, y: 10, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 },
+      { id: 9, name: "Dorsais", x: 45, y: 25, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 },
+      { id: 10, name: "Tríceps", x: 70, y: 35, width: 55, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 },
+      { id: 11, name: "Lombares", x: 45, y: 40, width: 70, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 },
+      { id: 12, name: "Glúteos", x: 45, y: 55, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 },
+      { id: 13, name: "Isquiotibiais", x: 45, y: 70, width: 80, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 },
+      { id: 14, name: "Cardio", x: 80, y: 90, width: 50, height: 22, rotation: 0, color: "hsl(var(--accent))", fontSize: 12 }
     ]
   });
 
@@ -182,6 +183,7 @@ export function WorkoutMuscleSelector() {
     }));
   };
 
+  // **MODIFICADO: Agora também ajusta o tamanho da fonte**
   const resizeLabel = (labelId: number, sizeChange: number) => {
     setMuscleLabels(prev => ({
       ...prev,
@@ -190,7 +192,8 @@ export function WorkoutMuscleSelector() {
           ? { 
               ...label, 
               width: Math.max(30, label.width + sizeChange),
-              height: Math.max(18, label.height + (sizeChange * 0.4))
+              height: Math.max(18, label.height + (sizeChange * 0.4)),
+              fontSize: Math.max(8, Math.min(24, (label.fontSize || 12) + (sizeChange * 0.3)))
             }
           : label
       )
@@ -378,7 +381,10 @@ export function WorkoutMuscleSelector() {
                 onClick={() => toggleMuscleSelection(label.id)}
                 onMouseDown={(e) => startDrag(e, label)}
               >
-                <div className="flex items-center justify-center h-full text-center text-sm font-medium p-1">
+                <div 
+                  className="flex items-center justify-center h-full text-center font-medium p-1"
+                  style={{ fontSize: `${label.fontSize || 12}px` }}
+                >
                   {label.name}
                 </div>
                 
