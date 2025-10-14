@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { User, Settings, Target, Bell, Crown, Smartphone, Globe, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client"; // [profile-sync]
+import { toast } from "sonner"; // [profile-sync]
 
 const Profile = () => {
   const { user } = useAuth();
@@ -20,15 +22,43 @@ const Profile = () => {
   const [altura, setAltura] = useState("");
   const [metaPeso, setMetaPeso] = useState("");
 
+  // [profile-sync] Fetch fresh user data from backend
+  const loadUser = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error("Error loading user:", error);
+      return;
+    }
+    const u = data.user;
+    const md = u?.user_metadata || {};
+    
+    setEmail(u?.email || "");
+    setName(md.name || "");
+    setSexo(md.sexo || md.gender || "");
+    setBirthDate(md.birthDate || "");
+    setPeso((md.peso ?? md.weight ?? "").toString());
+    setAltura((md.altura ?? md.height ?? "").toString());
+    setMetaPeso((md.metaPeso ?? md.goalWeight ?? "").toString());
+  };
+
+  // [profile-sync] Save profile changes to backend
+  const handleSave = async () => {
+    const { error } = await supabase.auth.updateUser({
+      data: { name, sexo, birthDate, peso, altura, metaPeso }
+    });
+    
+    if (error) {
+      toast.error("Erro ao salvar: " + error.message);
+      return;
+    }
+    
+    toast.success("Dados atualizados com sucesso!");
+    await loadUser();
+  };
+
   useEffect(() => {
     if (user) {
-      setEmail(user.email || "");
-      setName(user.user_metadata?.name || "");
-      setSexo(user.user_metadata?.sexo || "");
-      setBirthDate(user.user_metadata?.birthDate || "");
-      setPeso(user.user_metadata?.peso || "");
-      setAltura(user.user_metadata?.altura || "");
-      setMetaPeso(user.user_metadata?.metaPeso || "");
+      loadUser(); // [profile-sync] Load fresh data on mount
     }
   }, [user]);
   return (
@@ -154,7 +184,7 @@ const Profile = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-2 mt-6">
-            <Button variant="fitness" className="flex-1">
+            <Button variant="fitness" className="flex-1" onClick={handleSave}>
               <Settings className="w-4 h-4 mr-2" />
               Salvar Alterações
             </Button>
