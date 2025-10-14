@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { GymCard } from "@/components/GymCard";
 import { StatCard } from "@/components/StatCard";
@@ -7,10 +7,12 @@ import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-fitness.jpg";
 import nutritionImage from "@/assets/nutrition-hero.jpg";
 import { AuthDialog } from "@/components/AuthDialog";
+import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [onboardingDialogOpen, setOnboardingDialogOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -18,9 +20,19 @@ const Index = () => {
     if (user) {
       navigate(path);
     } else {
-      setAuthDialogOpen(true);
+      setOnboardingDialogOpen(true);
     }
   };
+
+  useEffect(() => {
+    const handleOpenAuthDialog = () => {
+      setOnboardingDialogOpen(false);
+      setAuthDialogOpen(true);
+    };
+    
+    window.addEventListener('openAuthDialog', handleOpenAuthDialog);
+    return () => window.removeEventListener('openAuthDialog', handleOpenAuthDialog);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,7 +67,12 @@ const Index = () => {
                 <Zap className="w-5 h-5" />
                 Começar Agora
               </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full sm:w-auto border-white/30 text-white hover:bg-white/10"
+                onClick={() => handleProtectedAction("/dashboard")}
+              >
                 Ver Demo
               </Button>
             </div>
@@ -186,6 +203,7 @@ const Index = () => {
       </section>
 
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
+      <OnboardingDialog open={onboardingDialogOpen} onOpenChange={setOnboardingDialogOpen} />
     </div>
   );
 };
