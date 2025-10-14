@@ -82,9 +82,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       <DialogContent className="sm:max-w-md border-border/20 glass-card">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
-            <span className="gradient-hero bg-clip-text text-transparent">
-              {isLogin ? "Entrar" : "Criar Conta"}
-            </span>
+            {isLogin ? "Entrar" : "Criar Conta"}
           </DialogTitle>
           <DialogDescription className="text-center">
             {isLogin 
