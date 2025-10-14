@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ interface OnboardingDialogProps {
 }
 
 export function OnboardingDialog({ open, onOpenChange }: OnboardingDialogProps) {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   
@@ -79,6 +81,7 @@ export function OnboardingDialog({ open, onOpenChange }: OnboardingDialogProps) 
         toast.success("Conta criada com sucesso! Você já está logado.");
         onOpenChange(false);
         resetForm();
+        navigate("/dashboard");
       }
     } catch (error) {
       toast.error("Erro ao processar cadastro");
