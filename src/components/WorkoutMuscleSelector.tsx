@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
   X, Edit2, Save, RotateCw, 
-  ZoomIn, ZoomOut, Type, Palette 
+  ZoomIn, ZoomOut, Palette 
 } from 'lucide-react';
 import bodyFrontImg from '@/assets/body-front.png';
 import bodyBackImg from '@/assets/body-back.png';
@@ -298,9 +298,9 @@ export function WorkoutMuscleSelector() {
                         resizeLabel(label.id, 10, 5);
                       }}
                       className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
-                      title="Aumentar"
+                      title="Aumentar Tamanho"
                     >
-                      <Type size={12} />
+                      <ZoomIn size={12} />
                     </button>
                     <button
                       onClick={(e) => {
@@ -308,7 +308,7 @@ export function WorkoutMuscleSelector() {
                         resizeLabel(label.id, -10, -5);
                       }}
                       className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
-                      title="Diminuir"
+                      title="Diminuir Tamanho"
                     >
                       <ZoomOut size={12} />
                     </button>
