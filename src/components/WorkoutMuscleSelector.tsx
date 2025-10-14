@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
   X, Edit2, Save, RotateCw, 
-  ZoomIn, ZoomOut, Palette 
+  ZoomIn, ZoomOut, Palette,
+  Menu, Smartphone, Monitor
 } from 'lucide-react';
 import bodyFrontImg from '@/assets/body-front.png';
 import bodyBackImg from '@/assets/body-back.png';
@@ -23,28 +24,30 @@ export function WorkoutMuscleSelector() {
   const [currentView, setCurrentView] = useState<'front' | 'back'>('front');
   const [zoom, setZoom] = useState(1);
   const [editingLabel, setEditingLabel] = useState<number | null>(null);
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   const [muscleLabels, setMuscleLabels] = useState<{
     front: MuscleLabel[];
     back: MuscleLabel[];
   }>({
     front: [
-      { id: 1, name: "Ombros", x: 45, y: 15, width: 80, height: 30, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 2, name: "Peitoral", x: 40, y: 25, width: 100, height: 25, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 3, name: "Bíceps", x: 20, y: 35, width: 70, height: 25, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 4, name: "Abdômen", x: 45, y: 45, width: 80, height: 25, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 5, name: "Oblíquos", x: 35, y: 50, width: 90, height: 25, rotation: -5, color: "hsl(var(--primary))" },
-      { id: 6, name: "Quadríceps", x: 45, y: 65, width: 90, height: 25, rotation: 0, color: "hsl(var(--primary))" },
-      { id: 7, name: "Panturrilhas", x: 45, y: 85, width: 90, height: 25, rotation: 0, color: "hsl(var(--primary))" }
+      { id: 1, name: "Ombros", x: 45, y: 15, width: 60, height: 24, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 2, name: "Peitoral", x: 40, y: 25, width: 70, height: 22, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 3, name: "Bíceps", x: 20, y: 35, width: 55, height: 22, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 4, name: "Abdômen", x: 45, y: 45, width: 65, height: 22, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 5, name: "Oblíquos", x: 35, y: 50, width: 70, height: 22, rotation: -5, color: "hsl(var(--primary))" },
+      { id: 6, name: "Quadríceps", x: 45, y: 65, width: 75, height: 22, rotation: 0, color: "hsl(var(--primary))" },
+      { id: 7, name: "Panturrilhas", x: 45, y: 85, width: 75, height: 22, rotation: 0, color: "hsl(var(--primary))" }
     ],
     back: [
-      { id: 8, name: "Trapézio", x: 45, y: 10, width: 80, height: 25, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 9, name: "Dorsais", x: 45, y: 25, width: 80, height: 25, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 10, name: "Tríceps", x: 70, y: 35, width: 70, height: 25, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 11, name: "Lombares", x: 45, y: 40, width: 90, height: 25, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 12, name: "Glúteos", x: 45, y: 55, width: 80, height: 25, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 13, name: "Isquiotibiais", x: 45, y: 70, width: 100, height: 25, rotation: 0, color: "hsl(var(--accent))" },
-      { id: 14, name: "Cardio", x: 80, y: 90, width: 60, height: 25, rotation: 0, color: "hsl(var(--accent))" }
+      { id: 8, name: "Trapézio", x: 45, y: 10, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 9, name: "Dorsais", x: 45, y: 25, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 10, name: "Tríceps", x: 70, y: 35, width: 55, height: 22, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 11, name: "Lombares", x: 45, y: 40, width: 70, height: 22, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 12, name: "Glúteos", x: 45, y: 55, width: 65, height: 22, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 13, name: "Isquiotibiais", x: 45, y: 70, width: 80, height: 22, rotation: 0, color: "hsl(var(--accent))" },
+      { id: 14, name: "Cardio", x: 80, y: 90, width: 50, height: 22, rotation: 0, color: "hsl(var(--accent))" }
     ]
   });
 
@@ -52,7 +55,25 @@ export function WorkoutMuscleSelector() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Detectar tamanho da tela
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const currentLabels = muscleLabels[currentView];
+
+  // Tamanhos responsivos
+  const getContainerSize = () => {
+    if (isMobileView) {
+      return { width: 280, height: 420 };
+    }
+    return { width: 400, height: 600 };
+  };
 
   const toggleMuscleSelection = (muscleId: number) => {
     if (editorMode) return;
@@ -64,14 +85,18 @@ export function WorkoutMuscleSelector() {
     );
   };
 
-  const startDrag = (e: React.MouseEvent, label: MuscleLabel) => {
+  const startDrag = (e: React.MouseEvent | React.TouchEvent, label: MuscleLabel) => {
     if (!editorMode) return;
     
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     
-    const x = (e.clientX - rect.left) / zoom;
-    const y = (e.clientY - rect.top) / zoom;
+    const scale = isMobileView ? 0.7 : 1;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    const x = (clientX - rect.left) / (zoom * scale);
+    const y = (clientY - rect.top) / (zoom * scale);
     
     setDraggingLabel(label.id);
     setDragOffset({
@@ -83,14 +108,18 @@ export function WorkoutMuscleSelector() {
     e.stopPropagation();
   };
 
-  const handleDrag = (e: React.MouseEvent) => {
+  const handleDrag = (e: React.MouseEvent | React.TouchEvent) => {
     if (!draggingLabel || !editorMode) return;
     
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     
-    const x = ((e.clientX - rect.left) / zoom) - dragOffset.x;
-    const y = ((e.clientY - rect.top) / zoom) - dragOffset.y;
+    const scale = isMobileView ? 0.7 : 1;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    const x = ((clientX - rect.left) / (zoom * scale)) - dragOffset.x;
+    const y = ((clientY - rect.top) / (zoom * scale)) - dragOffset.y;
     
     setMuscleLabels(prev => ({
       ...prev,
@@ -121,15 +150,15 @@ export function WorkoutMuscleSelector() {
     }));
   };
 
-  const resizeLabel = (labelId: number, widthChange: number, heightChange: number) => {
+  const resizeLabel = (labelId: number, sizeChange: number) => {
     setMuscleLabels(prev => ({
       ...prev,
       [currentView]: prev[currentView].map(label =>
         label.id === labelId
           ? { 
               ...label, 
-              width: Math.max(40, label.width + widthChange),
-              height: Math.max(20, label.height + heightChange)
+              width: Math.max(30, label.width + sizeChange),
+              height: Math.max(18, label.height + (sizeChange * 0.4))
             }
           : label
       )
@@ -160,82 +189,134 @@ export function WorkoutMuscleSelector() {
   }, []);
 
   const currentImage = currentView === 'front' ? bodyFrontImg : bodyBackImg;
+  const containerSize = getContainerSize();
 
   return (
-    <div className="bg-gradient-to-br from-background to-muted rounded-xl p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Selecionar Grupos Musculares</h2>
-        <div className="flex gap-2">
+    <div className="bg-gradient-to-br from-background to-muted rounded-xl p-2 sm:p-4 lg:p-6">
+      {/* Header - Responsivo */}
+      <div className="flex justify-between items-center mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Menu Mobile */}
+          {isMobileView && (
+            <button 
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 hover:bg-muted/80 rounded-lg transition-colors"
+            >
+              <Menu size={20} />
+            </button>
+          )}
+          
+          <h2 className="text-lg sm:text-2xl font-bold text-foreground truncate">
+            {isMobileView ? 'Grupos Musculares' : 'Selecionar Grupos Musculares'}
+          </h2>
+        </div>
+        
+        <div className="flex gap-1 sm:gap-2">
+          {/* Toggle Mobile/Desktop View */}
+          <button 
+            onClick={() => setIsMobileView(!isMobileView)}
+            className="p-2 hover:bg-muted/80 rounded-lg transition-colors hidden sm:flex"
+            title={isMobileView ? "Modo Desktop" : "Modo Mobile"}
+          >
+            {isMobileView ? <Monitor size={18} /> : <Smartphone size={18} />}
+          </button>
+
           {/* Controles de Zoom */}
           <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
             <button 
               onClick={() => setZoom(prev => Math.max(0.5, prev - 0.1))}
-              className="p-2 hover:bg-muted/80 rounded transition-colors"
+              className="p-1 sm:p-2 hover:bg-muted/80 rounded transition-colors"
             >
-              <ZoomOut size={18} />
+              <ZoomOut size={16} />
             </button>
-            <span className="text-sm px-2">{(zoom * 100).toFixed(0)}%</span>
+            <span className="text-xs sm:text-sm px-1 sm:px-2">{(zoom * 100).toFixed(0)}%</span>
             <button 
               onClick={() => setZoom(prev => Math.min(2, prev + 0.1))}
-              className="p-2 hover:bg-muted/80 rounded transition-colors"
+              className="p-1 sm:p-2 hover:bg-muted/80 rounded transition-colors"
             >
-              <ZoomIn size={18} />
+              <ZoomIn size={16} />
             </button>
           </div>
 
           {editorMode && (
             <button 
               onClick={savePositions}
-              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-1 sm:gap-2 bg-primary text-primary-foreground px-2 sm:px-4 py-1 sm:py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm"
             >
-              <Save size={18} />
-              Salvar
+              <Save size={16} />
+              <span className="hidden sm:inline">Salvar</span>
             </button>
           )}
           <button 
             onClick={() => setEditorMode(!editorMode)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-lg transition-colors text-sm ${
               editorMode 
                 ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
                 : 'bg-muted text-muted-foreground hover:bg-muted/80'
             }`}
           >
-            <Edit2 size={18} />
-            {editorMode ? 'Sair Editor' : 'Modo Editor'}
+            <Edit2 size={16} />
+            <span className="hidden sm:inline">
+              {editorMode ? 'Sair Editor' : 'Editor'}
+            </span>
           </button>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Imagem Anatômica com Labels */}
-        <div className="relative">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              {editorMode ? 'Editor de Posições' : 'Selecione as Áreas'}
-            </h3>
-            <button
-              onClick={() => setCurrentView(currentView === 'front' ? 'back' : 'front')}
-              className="flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors shadow-md"
-            >
-              <RotateCw size={18} />
-              Rotacionar
+      {/* Menu Mobile Expandível */}
+      {isMobileView && showMobileMenu && (
+        <div className="bg-muted/50 border border-border rounded-lg p-3 mb-4">
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <button className="p-2 bg-background rounded-lg border border-border text-center hover:bg-muted/50 transition-colors">
+              Dashboard
+            </button>
+            <button className="p-2 bg-background rounded-lg border border-border text-center hover:bg-muted/50 transition-colors">
+              Treinos
+            </button>
+            <button className="p-2 bg-background rounded-lg border border-border text-center hover:bg-muted/50 transition-colors">
+              Nutrição
+            </button>
+            <button className="p-2 bg-background rounded-lg border border-border text-center hover:bg-muted/50 transition-colors">
+              Progresso
             </button>
           </div>
+        </div>
+      )}
+
+      <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+        {/* Imagem Anatômica com Labels - Responsivo */}
+        <div className="relative">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 sm:mb-4">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">
+              {editorMode ? 'Editor' : 'Selecione as Áreas'}
+            </h3>
+            
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => setCurrentView(currentView === 'front' ? 'back' : 'front')}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1 sm:gap-2 bg-accent text-accent-foreground px-3 sm:px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors shadow-md text-sm sm:text-base"
+              >
+                <RotateCw size={16} />
+                <span>Rotacionar</span>
+              </button>
+            </div>
+          </div>
           
-          <div className="flex justify-center items-center bg-muted/50 rounded-xl p-4 border-2 border-dashed border-border">
+          <div className="flex justify-center items-center bg-muted/50 rounded-lg sm:rounded-xl p-2 sm:p-4 border border-dashed border-border">
             <div 
               ref={containerRef}
               className="relative bg-background rounded-lg shadow-lg overflow-hidden"
               style={{ 
-                width: '400px', 
-                height: '600px',
+                width: `${containerSize.width}px`,
+                height: `${containerSize.height}px`,
                 transform: `scale(${zoom})`,
                 transition: 'all 0.3s ease-in-out'
               }}
               onMouseMove={handleDrag}
               onMouseUp={endDrag}
               onMouseLeave={endDrag}
+              onTouchMove={handleDrag as any}
+              onTouchEnd={endDrag}
             >
               {/* Imagem do corpo humano */}
               <img 
@@ -295,22 +376,22 @@ export function WorkoutMuscleSelector() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        resizeLabel(label.id, 10, 5);
+                        resizeLabel(label.id, 8);
                       }}
                       className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
                       title="Aumentar Tamanho"
                     >
-                      <ZoomIn size={12} />
+                      <ZoomIn size={isMobileView ? 10 : 12} />
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        resizeLabel(label.id, -10, -5);
+                        resizeLabel(label.id, -8);
                       }}
                       className="bg-secondary text-secondary-foreground p-1 rounded hover:bg-secondary/90"
                       title="Diminuir Tamanho"
                     >
-                      <ZoomOut size={12} />
+                      <ZoomOut size={isMobileView ? 10 : 12} />
                     </button>
                   </div>
                 )}
