@@ -64,7 +64,8 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             data: {
               name,
               age,
-              height,
+              altura: height, // [auth-metadata-consistency]
+              height, // [auth-metadata-consistency] backward compatibility
             },
           },
         });
