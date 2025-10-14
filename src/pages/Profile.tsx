@@ -14,15 +14,21 @@ const Profile = () => {
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
-  const [height, setHeight] = useState("");
+  const [sexo, setSexo] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [peso, setPeso] = useState("");
+  const [altura, setAltura] = useState("");
+  const [metaPeso, setMetaPeso] = useState("");
 
   useEffect(() => {
     if (user) {
       setEmail(user.email || "");
       setName(user.user_metadata?.name || "");
-      setAge(user.user_metadata?.age || "");
-      setHeight(user.user_metadata?.height || "");
+      setSexo(user.user_metadata?.sexo || "");
+      setBirthDate(user.user_metadata?.birthDate || "");
+      setPeso(user.user_metadata?.peso || "");
+      setAltura(user.user_metadata?.altura || "");
+      setMetaPeso(user.user_metadata?.metaPeso || "");
     }
   }, [user]);
   return (
@@ -87,23 +93,25 @@ const Profile = () => {
               </div>
               
               <div>
-                <Label htmlFor="age">Idade</Label>
-                <Input 
-                  id="age" 
-                  type="number"
-                  value={age} 
-                  onChange={(e) => setAge(e.target.value)}
-                  className="w-full" 
-                />
+                <Label htmlFor="sexo">Sexo</Label>
+                <Select value={sexo} onValueChange={setSexo}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione seu sexo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="masculino">Masculino</SelectItem>
+                    <SelectItem value="feminino">Feminino</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               <div>
-                <Label htmlFor="height">Altura (cm)</Label>
+                <Label htmlFor="birthDate">Data de nascimento</Label>
                 <Input 
-                  id="height" 
-                  type="number"
-                  value={height} 
-                  onChange={(e) => setHeight(e.target.value)}
+                  id="birthDate" 
+                  type="date"
+                  value={birthDate ? new Date(birthDate).toISOString().split('T')[0] : ""} 
+                  onChange={(e) => setBirthDate(e.target.value)}
                   className="w-full" 
                 />
               </div>
@@ -111,45 +119,36 @@ const Profile = () => {
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="weight">Peso atual (kg)</Label>
-                <Input id="weight" defaultValue="75.2" className="w-full" />
+                <Label htmlFor="peso">Peso atual (kg)</Label>
+                <Input 
+                  id="peso" 
+                  type="number"
+                  value={peso} 
+                  onChange={(e) => setPeso(e.target.value)}
+                  className="w-full" 
+                />
               </div>
               
               <div>
-                <Label htmlFor="goal-weight">Peso objetivo (kg)</Label>
-                <Input id="goal-weight" defaultValue="73.0" className="w-full" />
+                <Label htmlFor="altura">Altura (cm)</Label>
+                <Input 
+                  id="altura" 
+                  type="number"
+                  value={altura} 
+                  onChange={(e) => setAltura(e.target.value)}
+                  className="w-full" 
+                />
               </div>
               
               <div>
-                <Label htmlFor="activity-level">Nível de atividade</Label>
-                <Select defaultValue="moderate">
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sedentary">Sedentário</SelectItem>
-                    <SelectItem value="light">Atividade leve</SelectItem>
-                    <SelectItem value="moderate">Atividade moderada</SelectItem>
-                    <SelectItem value="high">Atividade alta</SelectItem>
-                    <SelectItem value="very-high">Muito ativo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Label htmlFor="goal">Objetivo principal</Label>
-                <Select defaultValue="weight-loss">
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="weight-loss">Perda de peso</SelectItem>
-                    <SelectItem value="muscle-gain">Ganho de massa</SelectItem>
-                    <SelectItem value="maintenance">Manutenção</SelectItem>
-                    <SelectItem value="strength">Ganho de força</SelectItem>
-                    <SelectItem value="endurance">Resistência</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="metaPeso">Meta de peso (kg)</Label>
+                <Input 
+                  id="metaPeso" 
+                  type="number"
+                  value={metaPeso} 
+                  onChange={(e) => setMetaPeso(e.target.value)}
+                  className="w-full" 
+                />
               </div>
             </div>
           </div>
