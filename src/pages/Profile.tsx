@@ -7,8 +7,24 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Settings, Target, Bell, Crown, Smartphone, Globe, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
 
 const Profile = () => {
+  const { user } = useAuth();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [age, setAge] = useState("");
+  const [height, setHeight] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email || "");
+      setName(user.user_metadata?.name || "");
+      setAge(user.user_metadata?.age || "");
+      setHeight(user.user_metadata?.height || "");
+    }
+  }, [user]);
   return (
     <Layout>
       <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
@@ -17,8 +33,8 @@ const Profile = () => {
           <div className="w-24 h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold">João Silva</h1>
-          <p className="text-muted-foreground">Membro desde Janeiro 2024</p>
+          <h1 className="text-3xl font-bold">{name || "Usuário"}</h1>
+          <p className="text-muted-foreground">Membro desde {user?.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : 'Janeiro 2024'}</p>
           <Badge className="mt-2 bg-gradient-fitness text-white">
             <Crown className="w-3 h-3 mr-1" />
             Premium
@@ -50,22 +66,46 @@ const Profile = () => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name">Nome completo</Label>
-                <Input id="name" defaultValue="João Silva" className="w-full" />
+                <Input 
+                  id="name" 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full" 
+                />
               </div>
               
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" defaultValue="joao@email.com" className="w-full" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full" 
+                  disabled
+                />
               </div>
               
               <div>
                 <Label htmlFor="age">Idade</Label>
-                <Input id="age" defaultValue="28" className="w-full" />
+                <Input 
+                  id="age" 
+                  type="number"
+                  value={age} 
+                  onChange={(e) => setAge(e.target.value)}
+                  className="w-full" 
+                />
               </div>
               
               <div>
                 <Label htmlFor="height">Altura (cm)</Label>
-                <Input id="height" defaultValue="178" className="w-full" />
+                <Input 
+                  id="height" 
+                  type="number"
+                  value={height} 
+                  onChange={(e) => setHeight(e.target.value)}
+                  className="w-full" 
+                />
               </div>
             </div>
             
