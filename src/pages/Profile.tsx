@@ -26,18 +26,18 @@ const Profile = () => {
         </div>
 
         {/* Profile Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold text-primary">89</div>
-            <div className="text-sm text-muted-foreground">Treinos</div>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <div className="text-center p-3 sm:p-4 rounded-lg glass-card">
+            <div className="text-xl sm:text-2xl font-bold text-primary">89</div>
+            <div className="text-xs sm:text-sm text-muted-foreground">Treinos</div>
           </div>
-          <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold text-secondary">156</div>
-            <div className="text-sm text-muted-foreground">Refeições</div>
+          <div className="text-center p-3 sm:p-4 rounded-lg glass-card">
+            <div className="text-xl sm:text-2xl font-bold text-secondary">156</div>
+            <div className="text-xs sm:text-sm text-muted-foreground">Refeições</div>
           </div>
-          <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold">47</div>
-            <div className="text-sm text-muted-foreground">Dias ativos</div>
+          <div className="text-center p-3 sm:p-4 rounded-lg glass-card">
+            <div className="text-xl sm:text-2xl font-bold">47</div>
+            <div className="text-xs sm:text-sm text-muted-foreground">Dias ativos</div>
           </div>
         </div>
 
@@ -46,44 +46,44 @@ const Profile = () => {
           title="Informações Pessoais"
           description="Seus dados básicos e objetivos"
         >
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name">Nome completo</Label>
-                <Input id="name" defaultValue="João Silva" />
+                <Input id="name" defaultValue="João Silva" className="w-full" />
               </div>
               
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" defaultValue="joao@email.com" />
+                <Input id="email" type="email" defaultValue="joao@email.com" className="w-full" />
               </div>
               
               <div>
                 <Label htmlFor="age">Idade</Label>
-                <Input id="age" defaultValue="28" />
+                <Input id="age" defaultValue="28" className="w-full" />
               </div>
               
               <div>
                 <Label htmlFor="height">Altura (cm)</Label>
-                <Input id="height" defaultValue="178" />
+                <Input id="height" defaultValue="178" className="w-full" />
               </div>
             </div>
             
             <div className="space-y-4">
               <div>
                 <Label htmlFor="weight">Peso atual (kg)</Label>
-                <Input id="weight" defaultValue="75.2" />
+                <Input id="weight" defaultValue="75.2" className="w-full" />
               </div>
               
               <div>
                 <Label htmlFor="goal-weight">Peso objetivo (kg)</Label>
-                <Input id="goal-weight" defaultValue="73.0" />
+                <Input id="goal-weight" defaultValue="73.0" className="w-full" />
               </div>
               
               <div>
                 <Label htmlFor="activity-level">Nível de atividade</Label>
                 <Select defaultValue="moderate">
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -99,7 +99,7 @@ const Profile = () => {
               <div>
                 <Label htmlFor="goal">Objetivo principal</Label>
                 <Select defaultValue="weight-loss">
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -114,13 +114,13 @@ const Profile = () => {
             </div>
           </div>
           
-          <div className="flex gap-2 mt-6">
+          <div className="flex flex-col sm:flex-row gap-2 mt-6">
             <Button variant="fitness" className="flex-1">
-              <Settings className="w-4 h-4" />
+              <Settings className="w-4 h-4 mr-2" />
               Salvar Alterações
             </Button>
-            <Button variant="outline">
-              <Target className="w-4 h-4" />
+            <Button variant="outline" className="flex-1">
+              <Target className="w-4 h-4 mr-2" />
               Recalcular Metas
             </Button>
           </div>
@@ -193,7 +193,7 @@ const Profile = () => {
               <Crown className="w-8 h-8 text-yellow-300" />
             </div>
             
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-primary rounded-full" />
                 <span>Análise IA ilimitada</span>
@@ -212,11 +212,11 @@ const Profile = () => {
               </div>
             </div>
             
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button variant="outline" className="flex-1">
                 Gerenciar Assinatura
               </Button>
-              <Button variant="nutrition-outline">
+              <Button variant="nutrition-outline" className="flex-1">
                 Cancelar Plano
               </Button>
             </div>
@@ -240,7 +240,7 @@ const Profile = () => {
               <Switch />
             </div>
             
-            <div className="flex gap-2 pt-4">
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
               <Button variant="outline" className="flex-1">
                 Baixar Meus Dados
               </Button>
