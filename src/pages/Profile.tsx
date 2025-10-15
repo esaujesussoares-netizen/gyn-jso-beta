@@ -82,7 +82,7 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="p-4 space-y-6 max-w-4xl mx-auto">
+      <div className="p-4 pb-24 md:pb-4 space-y-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center">
           <div className="w-24 h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
