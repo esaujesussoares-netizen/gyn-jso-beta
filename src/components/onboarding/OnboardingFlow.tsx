@@ -18,6 +18,7 @@ import Step13 from "./steps/Step13";
 
 export interface OnboardingData {
   authMethod?: 'google' | 'facebook' | 'email' | 'guest';
+  name?: string;
   gender?: 'male' | 'female' | 'other';
   birthDate?: string;
   weight?: number;
@@ -56,7 +57,7 @@ const OnboardingFlow = () => {
         authMethod: data.authMethod,
         
         // Personal info from Step 2
-        name: data.gender || '', // We'll need to add name field in Step2
+        name: data.name || '',
         email: '', // Will be filled from auth
         age: data.birthDate ? new Date().getFullYear() - new Date(data.birthDate).getFullYear() : null,
         height: data.height,
