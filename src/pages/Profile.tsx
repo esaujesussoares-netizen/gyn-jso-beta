@@ -7,8 +7,71 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Settings, Target, Bell, Crown, Smartphone, Globe, Shield } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
+  // === INÍCIO DAS MODIFICAÇÕES ===
+  type FitnessGoal = 'weight_loss' | 'muscle_gain' | 'maintenance';
+  interface UserProfileData {
+    name: string;
+    email: string;
+    age: number | null;
+    weight: number | null;
+    height: number | null;
+    fitness_goal: FitnessGoal | '';
+  }
+  const { user } = useAuth();
+  const [userData, setUserData] = useState<UserProfileData>({
+    name: '',
+    email: '',
+    age: null,
+    weight: null,
+    height: null,
+    fitness_goal: ''
+  });
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('userData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setUserData({
+          name: parsed.name ?? '',
+          email: parsed.email ?? (user?.email ?? ''),
+          age: parsed.age ?? null,
+          weight: parsed.weight ?? null,
+          height: parsed.height ?? null,
+          fitness_goal: (parsed.fitness_goal as FitnessGoal) ?? ''
+        });
+        return;
+      }
+    } catch (_e) {
+      // ignore JSON parse errors
+    }
+
+    if (user) {
+      const m = (user.user_metadata || {}) as Record<string, any>;
+      setUserData({
+        name: (m.name as string) ?? '',
+        email: user.email ?? '',
+        age: typeof m.age === 'number' ? m.age : m.age ? Number(m.age) : null,
+        weight: typeof m.weight === 'number' ? m.weight : m.weight ? Number(m.weight) : null,
+        height: typeof m.height === 'number' ? m.height : m.height ? Number(m.height) : null,
+        fitness_goal: (m.fitness_goal as FitnessGoal) ?? ''
+      });
+    } else {
+      setUserData(prev => ({ ...prev, email: '' }));
+    }
+  }, [user]);
+
+  const goalValueForSelect = useMemo(() => {
+    const val = userData.fitness_goal ? userData.fitness_goal.replace('_','-') : '';
+    if (val === 'weight-loss' || val === 'muscle-gain' || val === 'maintenance') return val;
+    return 'maintenance';
+  }, [userData.fitness_goal]);
+  // === FIM DAS MODIFICAÇÕES ===
+
   return (
     <Layout>
       <div className="p-4 space-y-6 max-w-4xl mx-auto">
@@ -17,7 +80,7 @@ const Profile = () => {
           <div className="w-24 h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold">João Silva</h1>
+          <h1 className="text-3xl font-bold">{userData.name || "—"}</h1>
           <p className="text-muted-foreground">Membro desde Janeiro 2024</p>
           <Badge className="mt-2 bg-gradient-fitness text-white">
             <Crown className="w-3 h-3 mr-1" />
@@ -50,29 +113,29 @@ const Profile = () => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name">Nome completo</Label>
-                <Input id="name" defaultValue="João Silva" />
+                <Input id="name" defaultValue={userData.name || ""} />
               </div>
               
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" defaultValue="joao@email.com" />
+                <Input id="email" type="email" defaultValue={userData.email || ""} />
               </div>
               
               <div>
                 <Label htmlFor="age">Idade</Label>
-                <Input id="age" defaultValue="28" />
+                <Input id="age" defaultValue={userData.age !== null ? String(userData.age) : ""} />
               </div>
               
               <div>
                 <Label htmlFor="height">Altura (cm)</Label>
-                <Input id="height" defaultValue="178" />
+                <Input id="height" defaultValue={userData.height !== null ? String(userData.height) : ""} />
               </div>
             </div>
             
             <div className="space-y-4">
               <div>
                 <Label htmlFor="weight">Peso atual (kg)</Label>
-                <Input id="weight" defaultValue="75.2" />
+                <Input id="weight" defaultValue={userData.weight !== null ? String(userData.weight) : ""} />
               </div>
               
               <div>
@@ -98,7 +161,7 @@ const Profile = () => {
               
               <div>
                 <Label htmlFor="goal">Objetivo principal</Label>
-                <Select defaultValue="weight-loss">
+                <Select defaultValue={goalValueForSelect}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
