@@ -23,14 +23,12 @@ const Step2 = ({ data, updateData, nextStep, prevStep }: StepProps) => {
   const [date, setDate] = useState<Date | undefined>(
     data.birthDate ? new Date(data.birthDate) : undefined
   );
-  const [name, setName] = useState(data.name || '');
 
   const handleContinue = () => {
-    if (!name || !data.gender || !date || !data.weight || !data.height || !data.goalWeight) {
+    if (!data.gender || !date || !data.weight || !data.height || !data.goalWeight) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
-    updateData({ name });
     nextStep();
   };
 
@@ -42,16 +40,6 @@ const Step2 = ({ data, updateData, nextStep, prevStep }: StepProps) => {
       </div>
 
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Nome Completo</Label>
-          <Input
-            type="text"
-            placeholder="Digite seu nome completo"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
         <div className="space-y-2">
           <Label>Sexo</Label>
           <Select value={data.gender} onValueChange={(value) => updateData({ gender: value as any })}>

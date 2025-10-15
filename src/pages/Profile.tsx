@@ -36,17 +36,9 @@ const Profile = () => {
       const saved = localStorage.getItem('userData');
       if (saved) {
         const parsed = JSON.parse(saved);
-        
-        // CORREÇÃO: Buscar nome e email corretamente
-        // Se name estiver vazio ou for gender, buscar de user.user_metadata ou usar placeholder
-        let userName = parsed.name || '';
-        if (userName === 'male' || userName === 'female' || userName === 'other' || !userName) {
-          userName = user?.user_metadata?.name || user?.user_metadata?.full_name || '';
-        }
-        
         setUserData({
-          name: userName,
-          email: parsed.email || user?.email || '',
+          name: parsed.name ?? '',
+          email: parsed.email ?? (user?.email ?? ''),
           age: parsed.age ?? null,
           weight: parsed.currentWeight ?? parsed.weight ?? null,
           height: parsed.height ?? null,
@@ -61,7 +53,7 @@ const Profile = () => {
     if (user) {
       const m = (user.user_metadata || {}) as Record<string, any>;
       setUserData({
-        name: (m.name || m.full_name as string) ?? '',
+        name: (m.name as string) ?? '',
         email: user.email ?? '',
         age: typeof m.age === 'number' ? m.age : m.age ? Number(m.age) : null,
         weight: typeof m.weight === 'number' ? m.weight : m.weight ? Number(m.weight) : null,
