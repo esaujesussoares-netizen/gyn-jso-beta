@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GymCard } from "@/components/GymCard";
 import { StatCard } from "@/components/StatCard";
@@ -7,28 +7,12 @@ import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-fitness.jpg";
 import nutritionImage from "@/assets/nutrition-hero.jpg";
 import { AuthDialog } from "@/components/AuthDialog";
-import { OnboardingDialog } from "@/components/OnboardingDialog";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [onboardingOpen, setOnboardingOpen] = useState(false);
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && user) {
-      // Verificar se usuário completou onboarding
-      const userData = localStorage.getItem('userData');
-      const hasCompletedOnboarding = user.user_metadata?.hasCompletedOnboarding;
-      
-      if (!hasCompletedOnboarding && !userData) {
-        setOnboardingOpen(true);
-      } else {
-        navigate('/dashboard');
-      }
-    }
-  }, [user, loading, navigate]);
 
   const handleProtectedAction = (path: string) => {
     if (user) {
@@ -36,11 +20,6 @@ const Index = () => {
     } else {
       setAuthDialogOpen(true);
     }
-  };
-
-  const handleOnboardingComplete = () => {
-    setOnboardingOpen(false);
-    navigate('/dashboard');
   };
 
   return (
@@ -207,7 +186,6 @@ const Index = () => {
       </section>
 
       <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
-      <OnboardingDialog open={onboardingOpen} onComplete={handleOnboardingComplete} />
     </div>
   );
 };
