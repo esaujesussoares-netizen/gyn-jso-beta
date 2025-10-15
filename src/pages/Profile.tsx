@@ -40,9 +40,9 @@ const Profile = () => {
           name: parsed.name ?? '',
           email: parsed.email ?? (user?.email ?? ''),
           age: parsed.age ?? null,
-          weight: parsed.weight ?? null,
+          weight: parsed.currentWeight ?? parsed.weight ?? null,
           height: parsed.height ?? null,
-          fitness_goal: (parsed.fitness_goal as FitnessGoal) ?? ''
+          fitness_goal: (parsed.fitnessGoal ?? parsed.fitness_goal) as FitnessGoal ?? ''
         });
         return;
       }
@@ -140,12 +140,30 @@ const Profile = () => {
               
               <div>
                 <Label htmlFor="goal-weight">Peso objetivo (kg)</Label>
-                <Input id="goal-weight" defaultValue="73.0" />
+                <Input id="goal-weight" defaultValue={(() => {
+                  try {
+                    const saved = localStorage.getItem('userData');
+                    if (saved) {
+                      const parsed = JSON.parse(saved);
+                      return parsed.goalWeight ? String(parsed.goalWeight) : '';
+                    }
+                  } catch (_e) {}
+                  return '';
+                })()} />
               </div>
               
               <div>
                 <Label htmlFor="activity-level">Nível de atividade</Label>
-                <Select defaultValue="moderate">
+                <Select defaultValue={(() => {
+                  try {
+                    const saved = localStorage.getItem('userData');
+                    if (saved) {
+                      const parsed = JSON.parse(saved);
+                      return parsed.activityLevel || 'moderate';
+                    }
+                  } catch (_e) {}
+                  return 'moderate';
+                })()}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

@@ -50,9 +50,44 @@ const OnboardingFlow = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
     } else {
-      // Final step - save everything
-      const finalData = { ...data, hasCompletedOnboarding: true };
-      localStorage.setItem('userData', JSON.stringify(finalData));
+      // Final step - save everything with proper field mapping
+      const completeUserData = {
+        // Auth info
+        authMethod: data.authMethod,
+        
+        // Personal info from Step 2
+        name: data.gender || '', // We'll need to add name field in Step2
+        email: '', // Will be filled from auth
+        age: data.birthDate ? new Date().getFullYear() - new Date(data.birthDate).getFullYear() : null,
+        height: data.height,
+        currentWeight: data.weight,
+        goalWeight: data.goalWeight,
+        
+        // From Step 2
+        gender: data.gender,
+        birthDate: data.birthDate,
+        weight: data.weight,
+        weightUnit: data.weightUnit,
+        heightUnit: data.heightUnit,
+        
+        // From Steps 3-10
+        experience: data.experience,
+        gymType: data.gymType,
+        mainGoal: data.mainGoal,
+        muscleFocus: data.muscleFocus,
+        includeCardio: data.includeCardio,
+        trainingDays: data.trainingDays,
+        trainingSchedule: data.trainingSchedule,
+        
+        // Map to profile format
+        activityLevel: data.experience === 'beginner' ? 'light' : data.experience === 'intermediate' ? 'moderate' : 'high',
+        fitnessGoal: data.mainGoal === 'hypertrophy' ? 'muscle_gain' : data.mainGoal === 'weight_loss' ? 'weight_loss' : 'maintenance',
+        
+        // Completion flag
+        hasCompletedOnboarding: true
+      };
+      
+      localStorage.setItem('userData', JSON.stringify(completeUserData));
       localStorage.setItem('onboardingCompleted', 'true');
       toast.success("Treino personalizado criado com sucesso!");
       navigate('/dashboard');
