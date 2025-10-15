@@ -82,33 +82,33 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="p-4 pb-24 md:pb-4 space-y-6 max-w-4xl mx-auto">
+      <div className="p-3 md:p-4 pb-24 md:pb-4 space-y-4 md:space-y-6 max-w-4xl mx-auto overflow-x-hidden">
         {/* Header */}
         <div className="text-center">
-          <div className="w-24 h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
-            <User className="w-12 h-12 text-white" />
+          <div className="w-20 h-20 md:w-24 md:h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <User className="w-10 h-10 md:w-12 md:h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold">{userData.name || "—"}</h1>
-          <p className="text-muted-foreground">Membro desde Janeiro 2024</p>
-          <Badge className="mt-2 bg-gradient-fitness text-white">
+          <h1 className="text-2xl md:text-3xl font-bold truncate px-2">{userData.name || "—"}</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Membro desde Janeiro 2024</p>
+          <Badge className="mt-2 bg-gradient-fitness text-white text-xs md:text-sm">
             <Crown className="w-3 h-3 mr-1" />
             Premium
           </Badge>
         </div>
 
         {/* Profile Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold text-primary">0</div>
-            <div className="text-sm text-muted-foreground">Treinos</div>
+        <div className="grid grid-cols-3 gap-2 md:gap-4">
+          <div className="text-center p-3 md:p-4 rounded-lg glass-card">
+            <div className="text-xl md:text-2xl font-bold text-primary">0</div>
+            <div className="text-xs md:text-sm text-muted-foreground">Treinos</div>
           </div>
-          <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold text-secondary">0</div>
-            <div className="text-sm text-muted-foreground">Refeições</div>
+          <div className="text-center p-3 md:p-4 rounded-lg glass-card">
+            <div className="text-xl md:text-2xl font-bold text-secondary">0</div>
+            <div className="text-xs md:text-sm text-muted-foreground">Refeições</div>
           </div>
-          <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold">0</div>
-            <div className="text-sm text-muted-foreground">Dias ativos</div>
+          <div className="text-center p-3 md:p-4 rounded-lg glass-card">
+            <div className="text-xl md:text-2xl font-bold">0</div>
+            <div className="text-xs md:text-sm text-muted-foreground break-words">Dias ativos</div>
           </div>
         </div>
 
@@ -203,14 +203,14 @@ const Profile = () => {
             </div>
           </div>
           
-          <div className="flex gap-2 mt-6">
-            <Button variant="fitness" className="flex-1">
-              <Settings className="w-4 h-4" />
-              Salvar Alterações
+          <div className="flex flex-col sm:flex-row gap-2 mt-6">
+            <Button variant="fitness" className="flex-1 text-xs sm:text-sm">
+              <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="ml-1">Salvar Alterações</span>
             </Button>
-            <Button variant="outline">
-              <Target className="w-4 h-4" />
-              Recalcular Metas
+            <Button variant="outline" className="flex-1 text-xs sm:text-sm">
+              <Target className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="ml-1">Recalcular Metas</span>
             </Button>
           </div>
         </GymCard>
@@ -221,48 +221,45 @@ const Profile = () => {
           description="Personalize sua experiência"
         >
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">Notificações de treino</div>
-                  <div className="text-sm text-muted-foreground">Lembretes diários para se exercitar</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                <Bell className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm md:text-base">Notificações de treino</div>
+                  <div className="text-xs md:text-sm text-muted-foreground break-words">Lembretes diários para se exercitar</div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="flex-shrink-0" />
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Target className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">Metas automáticas</div>
-                  <div className="text-sm text-muted-foreground">Ajuste automático baseado no progresso</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                <Target className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm md:text-base">Metas automáticas</div>
+                  <div className="text-xs md:text-sm text-muted-foreground break-words">Ajuste automático baseado no progresso</div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="flex-shrink-0" />
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Smartphone className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">Análise por IA</div>
-                  <div className="text-sm text-muted-foreground">Análise automática de refeições por foto</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                <Smartphone className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm md:text-base">Análise por IA</div>
+                  <div className="text-xs md:text-sm text-muted-foreground break-words">Análise automática de refeições por foto</div>
                 </div>
               </div>
-              <Switch defaultChecked />
+              <Switch defaultChecked className="flex-shrink-0" />
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">Compartilhamento de dados</div>
-                  <div className="text-sm text-muted-foreground">Me permite compartilhar progresso com a comunidade</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                <Globe className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm md:text-base">Compartilhamento de dados</div>
+                  <div className="text-xs md:text-sm text-muted-foreground break-words">Me permite compartilhar progresso com a comunidade</div>
                 </div>
               </div>
-              <Switch />
+              <Switch className="flex-shrink-0" />
             </div>
           </div>
         </GymCard>
@@ -301,11 +298,11 @@ const Profile = () => {
               </div>
             </div>
             
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex-1">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button variant="outline" className="flex-1 text-xs sm:text-sm">
                 Gerenciar Assinatura
               </Button>
-              <Button variant="nutrition-outline">
+              <Button variant="nutrition-outline" className="text-xs sm:text-sm">
                 Cancelar Plano
               </Button>
             </div>
@@ -318,25 +315,25 @@ const Profile = () => {
           description="Controle seus dados e privacidade"
         >
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">Autenticação biométrica</div>
-                  <div className="text-sm text-muted-foreground">Use impressão digital ou Face ID</div>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                <Shield className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm md:text-base">Autenticação biométrica</div>
+                  <div className="text-xs md:text-sm text-muted-foreground break-words">Use impressão digital ou Face ID</div>
                 </div>
               </div>
-              <Switch />
+              <Switch className="flex-shrink-0" />
             </div>
             
-            <div className="flex gap-2 pt-4">
-              <Button variant="outline" className="flex-1">
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
+              <Button variant="outline" className="flex-1 text-xs sm:text-sm">
                 Baixar Meus Dados
               </Button>
-              <Button variant="outline" className="flex-1">
+              <Button variant="outline" className="flex-1 text-xs sm:text-sm">
                 Alterar Senha
               </Button>
-              <Button variant="destructive" className="flex-1">
+              <Button variant="destructive" className="flex-1 text-xs sm:text-sm">
                 Excluir Conta
               </Button>
             </div>
