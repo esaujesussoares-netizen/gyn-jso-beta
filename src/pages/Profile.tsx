@@ -99,15 +99,15 @@ const Profile = () => {
         {/* Profile Stats */}
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold text-primary">89</div>
+            <div className="text-2xl font-bold text-primary">0</div>
             <div className="text-sm text-muted-foreground">Treinos</div>
           </div>
           <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold text-secondary">156</div>
+            <div className="text-2xl font-bold text-secondary">0</div>
             <div className="text-sm text-muted-foreground">Refeições</div>
           </div>
           <div className="text-center p-4 rounded-lg glass-card">
-            <div className="text-2xl font-bold">47</div>
+            <div className="text-2xl font-bold">0</div>
             <div className="text-sm text-muted-foreground">Dias ativos</div>
           </div>
         </div>
