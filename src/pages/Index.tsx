@@ -16,7 +16,13 @@ const Index = () => {
 
   const handleProtectedAction = (path: string) => {
     if (user) {
-      navigate(path);
+      // Check if user has completed onboarding
+      const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+      if (!onboardingCompleted && path === '/dashboard') {
+        navigate('/onboarding');
+      } else {
+        navigate(path);
+      }
     } else {
       setAuthDialogOpen(true);
     }

@@ -11,6 +11,7 @@ import Progress from "./pages/Progress";
 import Profile from "./pages/Profile";
 import Exercises from "./pages/Exercises";
 import NotFound from "./pages/NotFound";
+import OnboardingFlow from "./components/onboarding/OnboardingFlow";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/nutrition" element={<Nutrition />} />
