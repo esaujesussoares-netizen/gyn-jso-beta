@@ -7,70 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Settings, Target, Bell, Crown, Smartphone, Globe, Shield } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client"; // [profile-sync]
-import { toast } from "sonner"; // [profile-sync]
 
 const Profile = () => {
-  const { user } = useAuth();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [sexo, setSexo] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [peso, setPeso] = useState("");
-  const [altura, setAltura] = useState("");
-  const [metaPeso, setMetaPeso] = useState("");
-
-  // [profile-sync] Fetch fresh user data from backend
-  const loadUser = async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      console.error("Error loading user:", error);
-      return;
-    }
-    const u = data.user;
-    const md = u?.user_metadata || {};
-    
-    setEmail(u?.email || "");
-    setName(md.name || "");
-    setSexo(md.sexo || md.gender || "");
-    setBirthDate(md.birthDate || "");
-    setPeso((md.peso ?? md.weight ?? "").toString());
-    setAltura((md.altura ?? md.height ?? "").toString());
-    setMetaPeso((md.metaPeso ?? md.goalWeight ?? "").toString());
-  };
-
-  // [profile-sync] Save profile changes to backend
-  const handleSave = async () => {
-    const { error } = await supabase.auth.updateUser({
-      data: { name, sexo, birthDate, peso, altura, metaPeso }
-    });
-    
-    if (error) {
-      toast.error("Erro ao salvar: " + error.message);
-      return;
-    }
-    
-    toast.success("Dados atualizados com sucesso!");
-    await loadUser();
-  };
-
-  useEffect(() => {
-    if (user) {
-      loadUser(); // [profile-sync] Load fresh data on mount
-    }
-  }, [user]);
   return (
     <Layout>
-      <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="p-4 space-y-6 max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center">
           <div className="w-24 h-24 bg-gradient-hero rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold">{name || "Usuário"}</h1>
-          <p className="text-muted-foreground">Membro desde {user?.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : 'Janeiro 2024'}</p>
+          <h1 className="text-3xl font-bold">João Silva</h1>
+          <p className="text-muted-foreground">Membro desde Janeiro 2024</p>
           <Badge className="mt-2 bg-gradient-fitness text-white">
             <Crown className="w-3 h-3 mr-1" />
             Premium
@@ -78,18 +26,18 @@ const Profile = () => {
         </div>
 
         {/* Profile Stats */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4">
-          <div className="text-center p-3 sm:p-4 rounded-lg glass-card">
-            <div className="text-xl sm:text-2xl font-bold text-primary">89</div>
-            <div className="text-xs sm:text-sm text-muted-foreground">Treinos</div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-4 rounded-lg glass-card">
+            <div className="text-2xl font-bold text-primary">89</div>
+            <div className="text-sm text-muted-foreground">Treinos</div>
           </div>
-          <div className="text-center p-3 sm:p-4 rounded-lg glass-card">
-            <div className="text-xl sm:text-2xl font-bold text-secondary">156</div>
-            <div className="text-xs sm:text-sm text-muted-foreground">Refeições</div>
+          <div className="text-center p-4 rounded-lg glass-card">
+            <div className="text-2xl font-bold text-secondary">156</div>
+            <div className="text-sm text-muted-foreground">Refeições</div>
           </div>
-          <div className="text-center p-3 sm:p-4 rounded-lg glass-card">
-            <div className="text-xl sm:text-2xl font-bold">47</div>
-            <div className="text-xs sm:text-sm text-muted-foreground">Dias ativos</div>
+          <div className="text-center p-4 rounded-lg glass-card">
+            <div className="text-2xl font-bold">47</div>
+            <div className="text-sm text-muted-foreground">Dias ativos</div>
           </div>
         </div>
 
@@ -98,98 +46,81 @@ const Profile = () => {
           title="Informações Pessoais"
           description="Seus dados básicos e objetivos"
         >
-          <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="name">Nome completo</Label>
-                <Input 
-                  id="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full" 
-                />
+                <Input id="name" defaultValue="João Silva" />
               </div>
               
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full" 
-                  disabled
-                />
+                <Input id="email" type="email" defaultValue="joao@email.com" />
               </div>
               
               <div>
-                <Label htmlFor="sexo">Sexo</Label>
-                <Select value={sexo} onValueChange={setSexo}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione seu sexo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="masculino">Masculino</SelectItem>
-                    <SelectItem value="feminino">Feminino</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="age">Idade</Label>
+                <Input id="age" defaultValue="28" />
               </div>
               
               <div>
-                <Label htmlFor="birthDate">Data de nascimento</Label>
-                <Input 
-                  id="birthDate" 
-                  type="date"
-                  value={birthDate ? new Date(birthDate).toISOString().split('T')[0] : ""} 
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full" 
-                />
+                <Label htmlFor="height">Altura (cm)</Label>
+                <Input id="height" defaultValue="178" />
               </div>
             </div>
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="peso">Peso atual (kg)</Label>
-                <Input 
-                  id="peso" 
-                  type="number"
-                  value={peso} 
-                  onChange={(e) => setPeso(e.target.value)}
-                  className="w-full" 
-                />
+                <Label htmlFor="weight">Peso atual (kg)</Label>
+                <Input id="weight" defaultValue="75.2" />
               </div>
               
               <div>
-                <Label htmlFor="altura">Altura (cm)</Label>
-                <Input 
-                  id="altura" 
-                  type="number"
-                  value={altura} 
-                  onChange={(e) => setAltura(e.target.value)}
-                  className="w-full" 
-                />
+                <Label htmlFor="goal-weight">Peso objetivo (kg)</Label>
+                <Input id="goal-weight" defaultValue="73.0" />
               </div>
               
               <div>
-                <Label htmlFor="metaPeso">Meta de peso (kg)</Label>
-                <Input 
-                  id="metaPeso" 
-                  type="number"
-                  value={metaPeso} 
-                  onChange={(e) => setMetaPeso(e.target.value)}
-                  className="w-full" 
-                />
+                <Label htmlFor="activity-level">Nível de atividade</Label>
+                <Select defaultValue="moderate">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sedentary">Sedentário</SelectItem>
+                    <SelectItem value="light">Atividade leve</SelectItem>
+                    <SelectItem value="moderate">Atividade moderada</SelectItem>
+                    <SelectItem value="high">Atividade alta</SelectItem>
+                    <SelectItem value="very-high">Muito ativo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="goal">Objetivo principal</Label>
+                <Select defaultValue="weight-loss">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="weight-loss">Perda de peso</SelectItem>
+                    <SelectItem value="muscle-gain">Ganho de massa</SelectItem>
+                    <SelectItem value="maintenance">Manutenção</SelectItem>
+                    <SelectItem value="strength">Ganho de força</SelectItem>
+                    <SelectItem value="endurance">Resistência</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-2 mt-6">
-            <Button variant="fitness" className="flex-1" onClick={handleSave}>
-              <Settings className="w-4 h-4 mr-2" />
+          <div className="flex gap-2 mt-6">
+            <Button variant="fitness" className="flex-1">
+              <Settings className="w-4 h-4" />
               Salvar Alterações
             </Button>
-            <Button variant="outline" className="flex-1">
-              <Target className="w-4 h-4 mr-2" />
+            <Button variant="outline">
+              <Target className="w-4 h-4" />
               Recalcular Metas
             </Button>
           </div>
@@ -262,7 +193,7 @@ const Profile = () => {
               <Crown className="w-8 h-8 text-yellow-300" />
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-primary rounded-full" />
                 <span>Análise IA ilimitada</span>
@@ -281,11 +212,11 @@ const Profile = () => {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex gap-2">
               <Button variant="outline" className="flex-1">
                 Gerenciar Assinatura
               </Button>
-              <Button variant="nutrition-outline" className="flex-1">
+              <Button variant="nutrition-outline">
                 Cancelar Plano
               </Button>
             </div>
@@ -309,7 +240,7 @@ const Profile = () => {
               <Switch />
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-2 pt-4">
+            <div className="flex gap-2 pt-4">
               <Button variant="outline" className="flex-1">
                 Baixar Meus Dados
               </Button>

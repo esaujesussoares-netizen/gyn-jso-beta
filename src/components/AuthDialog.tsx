@@ -16,9 +16,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [height, setHeight] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -26,11 +23,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     
     if (!email || !password) {
       toast.error("Preencha todos os campos");
-      return;
-    }
-
-    if (!isLogin && (!name || !age || !height)) {
-      toast.error("Preencha todos os campos do cadastro");
       return;
     }
 
@@ -61,12 +53,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              name,
-              age,
-              altura: height, // [auth-metadata-consistency]
-              height, // [auth-metadata-consistency] backward compatibility
-            },
           },
         });
 
@@ -81,9 +67,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           onOpenChange(false);
           setEmail("");
           setPassword("");
-          setName("");
-          setAge("");
-          setHeight("");
         }
       }
     } catch (error) {
@@ -109,21 +92,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         </DialogHeader>
 
         <form onSubmit={handleAuth} className="space-y-4 mt-4">
-          {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="name">Nome completo</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="João Silva"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={loading}
-                className="bg-background/50 border-border/50"
-              />
-            </div>
-          )}
-
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -149,36 +117,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
               className="bg-background/50 border-border/50"
             />
           </div>
-
-          {!isLogin && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="age">Idade</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  placeholder="28"
-                  value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                  disabled={loading}
-                  className="bg-background/50 border-border/50"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="height">Altura (cm)</Label>
-                <Input
-                  id="height"
-                  type="number"
-                  placeholder="178"
-                  value={height}
-                  onChange={(e) => setHeight(e.target.value)}
-                  disabled={loading}
-                  className="bg-background/50 border-border/50"
-                />
-              </div>
-            </>
-          )}
 
           <Button 
             type="submit" 
