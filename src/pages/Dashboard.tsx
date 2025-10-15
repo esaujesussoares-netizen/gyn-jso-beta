@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, Clock, Target, Flame, Droplets, Zap, Plus, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const todayStats = [
     { icon: <Flame className="w-6 h-6" />, title: "Calorias Queimadas", value: "420", change: "+15%", variant: "fitness" as const },
     { icon: <Droplets className="w-6 h-6" />, title: "Água Consumida", value: "1.8L", change: "+5%", variant: "default" as const },
@@ -20,7 +22,7 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Olá, João! 👋</h1>
+            <h1 className="text-3xl font-bold">Olá, {user?.user_metadata?.name || user?.email?.split('@')[0] || 'Usuário'}! 👋</h1>
             <p className="text-muted-foreground">Vamos manter o foco nos seus objetivos hoje</p>
           </div>
           <div className="flex gap-2">

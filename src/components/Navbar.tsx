@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Home, Dumbbell, Apple, BarChart3, User } from "lucide-react";
-import { useLocation, Link } from "react-router-dom";
+import { Home, Dumbbell, Apple, BarChart3, User, LogOut } from "lucide-react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -13,6 +15,26 @@ const navigation = [
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Logout realizado",
+        description: "Até logo! Volte sempre.",
+      });
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Erro ao sair",
+        description: "Ocorreu um erro ao fazer logout. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass-card border-t border-border/20 md:top-0 md:bottom-auto md:border-b md:border-t-0">
@@ -47,6 +69,16 @@ export function Navbar() {
               </Link>
             );
           })}
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="flex flex-col items-center gap-1 h-auto p-2 min-w-[60px] md:flex-row md:gap-2 md:px-4 text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="text-xs md:text-sm">Sair</span>
+          </Button>
         </div>
       </div>
     </nav>
