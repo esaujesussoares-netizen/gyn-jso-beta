@@ -48,7 +48,7 @@ export function Navbar() {
           </span>
         </div>
         
-        <div className="flex justify-between items-center w-full md:justify-start md:gap-2 md:ml-8 overflow-x-auto">
+        <div className="flex justify-between items-center w-full md:justify-start md:gap-2 md:ml-8">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
             const Icon = item.icon;
@@ -59,12 +59,12 @@ export function Navbar() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "flex flex-col items-center gap-1 h-auto p-2 min-w-[60px] md:flex-row md:gap-2 md:px-4",
+                    "flex flex-col items-center gap-0.5 h-auto p-1.5 min-w-[50px] md:flex-row md:gap-2 md:px-4 md:p-2 md:min-w-[60px]",
                     isActive && "text-primary bg-gradient-fitness-subtle"
                   )}
                 >
                   <Icon className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-xs md:text-sm">{item.name}</span>
+                  <span className="text-[10px] md:text-sm leading-tight">{item.name}</span>
                 </Button>
               </Link>
             );
@@ -74,10 +74,10 @@ export function Navbar() {
             variant="ghost"
             size="sm"
             onClick={handleLogout}
-            className="flex flex-col items-center gap-1 h-auto p-2 min-w-[60px] md:flex-row md:gap-2 md:px-4 text-destructive hover:text-destructive hover:bg-destructive/10"
+            className="flex flex-col items-center gap-0.5 h-auto p-1.5 min-w-[50px] md:flex-row md:gap-2 md:px-4 md:p-2 md:min-w-[60px] text-destructive hover:text-destructive hover:bg-destructive/10"
           >
             <LogOut className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-xs md:text-sm">Sair</span>
+            <span className="text-[10px] md:text-sm leading-tight">Sair</span>
           </Button>
         </div>
       </div>
